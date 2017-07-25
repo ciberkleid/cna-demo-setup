@@ -12,6 +12,5 @@ applications:
   path: ../greeting-ui/target/greeting-ui-0.0.1-SNAPSHOT.jar
   services:
   - config-server
-  - cloud-bus
   - service-registry
   - circuit-breaker-dashboard
