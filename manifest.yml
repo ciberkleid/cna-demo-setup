@@ -1,0 +1,17 @@
+---
+applications:
+- name: fortune-service
+  random-route: true
+  path: fortune-service/target/fortune-service-0.0.1-SNAPSHOT.jar
+  services:
+  - config-server
+  - cloud-bus
+  - service-registry
+- name: greeting-ui
+  random-route: true
+  path: greeting-ui/target/greeting-ui-0.0.1-SNAPSHOT.jar
+  services:
+  - config-server
+  - cloud-bus
+  - service-registry
+  - circuit-breaker-dashboard
