@@ -27,11 +27,11 @@ fi
 
 # Build apps
 if [[ $BUILD == "Y" ]]; then
-  cd fortune-service
+  cd ../fortune-service
   mvn clean install
   cd ../greeting-ui
   mvn clean install
-  cd ..
+  cd ../cna-demo-setup
 fi
 
 # Wait until services are ready

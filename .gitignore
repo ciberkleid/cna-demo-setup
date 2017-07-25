@@ -1,5 +1,6 @@
 # Miscellaneous
 .DS_Store
+cloud-config-uri.json
 
 # Compiled class file
 *.class
