@@ -23,7 +23,10 @@ cd cna-demo-setup
 4.. Answer the prompts from the script:
 
 - Provide the git address to back the Config Server
-- Choose whether or not to leverage container-to-container networking (if 'Y', make sure eureka registration method is set to direct and not route in application.yml on GitHub, or wherever you choose to set this config value; also, make sure you have the cf CLI 'enable-access' plug-in installed)
-- Choose whether or not to build the apps (if 'Y', the script will run "mvn clean install" for both fortune-service and greeting-ui
+    -- The default value is https://github.com/ciberkleid/app-config. You can clone this repo and enter the new value.
+- Choose whether or not to leverage container-to-container networking
+    -- If 'Y', make sure spring.cloud.services.registrationMethod is set to direct and not route in application.yml in the app-config repo. Also, make sure you have the cf CLI 'enable-access' plug-in installed
+- Choose whether or not to build the apps
+    -- If 'Y', the script will run "mvn clean install" for both fortune-service and greeting-ui
 
 The script will create the necessary services and deploy the two applications to the targeted space. It will also set the TRUST_CERTS environment variable and, optionally, enable access between the apps for C2C networking.
