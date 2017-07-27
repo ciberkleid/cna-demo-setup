@@ -34,18 +34,6 @@ if [[ $BUILD == "Y" ]]; then
   cd ../cna-demo-setup
 fi
 
-# Push apps
-cf push -f manifest.yml --no-start
-cf set-env fortune-service TRUST_CERTS $CF_API
-cf set-env greeting-ui TRUST_CERTS $CF_API
-
-# Allow access for C2C networking
-if [[ $C2C == "Y" ]]; then
-  cf set-env fortune-service SPRING_ACTIVE_PROFILES c2c
-  cf set-env greeting-ui SPRING_ACTIVE_PROFILES c2c
-  cf allow-access greeting-ui fortune-service --protocol tcp --port 8080
-fi
-
 # Wait until services are ready
 i=`cf services | grep "in progress" | wc -l`
 while [ $i -gt 0 ]
@@ -54,6 +42,18 @@ while [ $i -gt 0 ]
     echo "Waiting for services to initialize..."
     i=`cf services | grep "in progress" | wc -l`
   done
+
+# Push apps
+cf push -f manifest.yml --no-start
+cf set-env fortune-service TRUST_CERTS $CF_API
+cf set-env greeting-ui TRUST_CERTS $CF_API
+
+# Allow access for C2C networking
+if [[ $C2C == "Y" ]]; then
+  cf set-env fortune-service SPRING_PROFILES_ACTIVE c2c
+  cf set-env greeting-ui SPRING_PROFILES_ACTIVE c2c
+  cf allow-access greeting-ui fortune-service --protocol tcp --port 8080
+fi
 
 # Start apps
 cf start fortune-service

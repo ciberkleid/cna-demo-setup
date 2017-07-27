@@ -2,6 +2,10 @@
 .DS_Store
 cloud-config-uri.json
 
+#IntelliJ
+.idea/
+*.iml
+
 # Compiled class file
 *.class
 

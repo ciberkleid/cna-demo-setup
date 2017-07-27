@@ -4,6 +4,7 @@ applications:
   random-route: true
   path: ../fortune-service/target/fortune-service-0.0.1-SNAPSHOT.jar
   services:
+  - circuit-breaker-dashboard
   - config-server
   - cloud-bus
   - service-registry
@@ -12,5 +13,6 @@ applications:
   path: ../greeting-ui/target/greeting-ui-0.0.1-SNAPSHOT.jar
   services:
   - config-server
+  - cloud-bus
   - service-registry
   - circuit-breaker-dashboard
