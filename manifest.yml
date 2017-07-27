@@ -4,7 +4,6 @@ applications:
   random-route: true
   path: ../fortune-service/target/fortune-service-0.0.1-SNAPSHOT.jar
   services:
-  - circuit-breaker-dashboard
   - config-server
   - cloud-bus
   - service-registry
