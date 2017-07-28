@@ -1,7 +1,7 @@
 # cna-demo
-Easy to set up cloud-native architecture demo for PCF. Consists of two apps, greeting-ui and fortune-service, and leverages all three services in Spring Cloud Services as well as PCF Metrics distributed tracing.
+Easy to set up cloud-native architecture demo for PCF. Consists of two apps, greeting-ui and fortune-service. Can be used to demo all three services in Spring Cloud Services as well as PCF Metrics distributed tracing.
 
-This demo leverages four repos:
+This demo comprises four repos:
 * https://github.com/ciberkleid/cna-demo-setup.git - Set up instructions and deployment scripts
 * https://github.com/ciberkleid/fortune-service.git - Backend service, returns fortunes
 * https://github.com/ciberkleid/greeting-ui.git - Front-end service, displays fortunes
@@ -9,7 +9,7 @@ This demo leverages four repos:
 
 # instructions
 
-1. Clone the setup repo and the two project repos into the same directory:
+1. Clone the setup repo and the two project repos into a single local directory:
 ```
 mkdir cna-demo
 cd cna-demo
@@ -29,7 +29,7 @@ cd cna-demo-setup
 4. Answer the prompts from the script:
 
 * Provide the git address to back the Config Server
-    * The default value is https://github.com/ciberkleid/app-config. You can clone this repo and enter the new value.
+    * The default value is https://github.com/ciberkleid/app-config. You can fork this repo and enter the new value.
 * Choose whether or not to leverage container-to-container networking
     * If 'Y', make sure you have the cf CLI 'network-policy-plugin' installed (see https://docs.pivotal.io/pivotalcf/1-11/devguide/deploy-apps/cf-networking.html)
 * Choose whether or not to build the apps
