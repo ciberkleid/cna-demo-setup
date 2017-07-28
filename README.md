@@ -20,13 +20,7 @@ git clone https://github.com/ciberkleid/greeting-ui.git
 
 2. Use the cf CLI to target the space to which you wish to deploy
 
-3. From the cna-demo-setup directory, run the script named 00_setup.sh:
-```
-cd cna-demo-setup
-. ./00_setup.sh
-```
-
-Answer the prompts from the script:
+3. From the cna-demo-setup directory, run the script named 00_setup.sh. Answer the prompts from the script:
 
 * Provide the git address to back the Config Server
     * The default value is https://github.com/ciberkleid/app-config. You can fork this repo and enter the new value.
@@ -35,9 +29,14 @@ Answer the prompts from the script:
 * Choose whether or not to build the apps
     * If 'Y', the script will run "mvn clean install" for both fortune-service and greeting-ui
 
+```
+cd cna-demo-setup
+. ./00_setup.sh
+```
+
 The script will create the necessary services and deploy the two applications to the targeted space. It will also set the TRUST_CERTS environment variable and, optionally, enable access between the apps for C2C networking.
 
-4. [Optional] To delete the apps, routes, and services created by the 00_setup.sh script, run the script named 01_cleanup.sh. Answer the prompts to control whether or not both apps and services are deleted.
+4. [Optional] To delete the apps, routes, and services created by the setup script, run the script named 01_cleanup.sh. Answer the prompts to control whether or not both apps and services are deleted.
 ```
 . ./01_cleanup.sh
 ```
