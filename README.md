@@ -20,19 +20,20 @@ git clone https://github.com/ciberkleid/greeting-ui.git
 
 2. Use the cf CLI to target the space to which you wish to deploy
 
-3. From the cna-demo-setup directory, run the script named 00_setup.sh. Answer the prompts from the script:
-
-* Provide the git address to back the Config Server
-    * The default value is https://github.com/ciberkleid/app-config. You can fork this repo and enter the new value.
-* Choose whether or not to leverage container-to-container networking
-    * If 'Y', make sure you have the cf CLI 'network-policy-plugin' installed (see https://docs.pivotal.io/pivotalcf/1-11/devguide/deploy-apps/cf-networking.html)
-* Choose whether or not to build the apps
-    * If 'Y', the script will run "mvn clean install" for both fortune-service and greeting-ui
-
+3. From the cna-demo-setup directory, run the script named 00_setup.sh.
 ```
 cd cna-demo-setup
 . ./00_setup.sh
 ```
+
+Answer the prompts from the script:
+
+* Provide the git address to back the Config Server
+    * The default value is https://github.com/ciberkleid/app-config. If you wish to set or change config values, fork this repo and enter the new value.
+* Choose whether or not to leverage container-to-container networking
+    * If 'Y', make sure you have the cf CLI 'network-policy-plugin' installed (see https://docs.pivotal.io/pivotalcf/1-11/devguide/deploy-apps/cf-networking.html)
+* Choose whether or not to build the apps
+    * If 'Y', the script will run "mvn clean install" for both fortune-service and greeting-ui
 
 The script will create the necessary services and deploy the two applications to the targeted space. It will also set the TRUST_CERTS environment variable and, optionally, enable access between the apps for C2C networking.
 
