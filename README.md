@@ -37,7 +37,7 @@ Answer the prompts from the script:
 
 The script will create the necessary services and deploy the two applications to the targeted space. It will also set the TRUST_CERTS environment variable and, optionally, enable access between the apps for C2C networking.
 
-4. [Optional] To delete the apps, routes, and services created by the setup script, run the cleanup script. Answer the prompts to control whether or not both apps and services are deleted.
+4. [Optional] To delete the apps, routes, and services created by the setup script, run the cleanup script. Answer the prompts to control if just apps and routes are deleted, or services as well.
 ```
 . ./01_cleanup.sh
 ```
