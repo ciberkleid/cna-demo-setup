@@ -12,7 +12,7 @@ GIT_URI=${GIT_URI:-https://github.com/ciberkleid/app-config}
 C2C=${C2C:-Y}
 BUILD=${BUILD:-N}
 
-# Creat Config Server JSON Config File
+# Create Config Server JSON Config File
 echo "{\"git\": {\"uri\": \"${GIT_URI}\"}}" > cloud-config-uri.json
 
 # Create services
