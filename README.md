@@ -1,7 +1,13 @@
 # cna-demo
 Easy to set up cloud-native architecture demo for PCF. Consists of two apps, greeting-ui and fortune-service, and leverages all three services in Spring Cloud Services as well as PCF Metrics distributed tracing.
 
-To set up and run:
+This demo leverages four repos:
+* https://github.com/ciberkleid/cna-demo-setup.git - Set up instructions and deployment scripts
+* https://github.com/ciberkleid/fortune-service.git - Backend service, returns fortunes
+* https://github.com/ciberkleid/greeting-ui.git - Front-end service, displays fortunes
+* https://github.com/ciberkleid/app-config - Config repo
+
+# instructions
 
 1. Clone the setup repo and the two project repos into the same directory:
 ```
