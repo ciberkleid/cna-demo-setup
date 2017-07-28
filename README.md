@@ -26,7 +26,7 @@ cd cna-demo-setup
 . ./00_setup.sh
 ```
 
-4. Answer the prompts from the script:
+Answer the prompts from the script:
 
 * Provide the git address to back the Config Server
     * The default value is https://github.com/ciberkleid/app-config. You can fork this repo and enter the new value.
@@ -37,7 +37,7 @@ cd cna-demo-setup
 
 The script will create the necessary services and deploy the two applications to the targeted space. It will also set the TRUST_CERTS environment variable and, optionally, enable access between the apps for C2C networking.
 
-5. [Optional] To delete the apps, routes, and services created by the 00_setup.sh script, run the script named 01_cleanup.sh. Answer the prompts to control whether or not both apps and services are deleted.
+4. [Optional] To delete the apps, routes, and services created by the 00_setup.sh script, run the script named 01_cleanup.sh. Answer the prompts to control whether or not both apps and services are deleted.
 ```
 . ./01_cleanup.sh
 ```
