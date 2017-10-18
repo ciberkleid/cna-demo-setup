@@ -1,0 +1,487 @@
+groups:
+- name: main
+  jobs:
+  - unit-test-fortune
+  - unit-test-greetingui
+  - build-fortune-app
+  - build-greeting-app
+  - cf-create-services-fortune
+  - cf-create-services-greeting
+  - cf-push-greeting-src
+  - cf-push-fortune-service-src
+  - fortune-service-smoketest
+  - greeting-smoketest
+  - e2e-integration
+  - c2c-integration-task
+  - init-environment
+resources:
+- name: pipeline-src
+  type: git
+  source:
+    branch: dev
+    uri: {{pipeline-git-url}}
+- name: greeting-ui-src
+  type: git
+  source:
+    branch: manifest
+    uri: {{service-A-git-url}}
+- name: fortune-service-src
+  type: git
+  source:
+    branch: manifest
+    uri: {{service-B-git-url}}
+
+resource_types:
+- name: gcs
+  type: docker-image
+  source:
+    repository: frodenas/gcs-resource
+
+jobs:
+### Init Environment
+- name: init-environment
+  public: true
+  plan:
+  - get: pipeline-src
+  - get: greeting-ui-src
+  - get: fortune-service-src
+  - task: destroy-environment
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: czero/cflinuxfs2
+      params:
+        GCP_SERVICE_ACCOUNT_KEY: {{gcp_service_account_key}}
+        GCP_BUCKET: {{GCP_BUCKET}}
+        APP_NAME: "greeting-ui fortune-service"
+        PWS_API: {{pws-api}}
+        PWS_ORG: {{pws-organization}}
+        PWS_USER: {{deploy-username}}
+        PWS_PWD: {{deploy-password}}
+        PWS_SPACE: {{pws-space}}
+      inputs:
+      - name: pipeline-src
+      - name: greeting-ui-src
+      - name: fortune-service-src
+      run:
+        path: pipeline-src/pipeline/ci/tasks/destroy-environment.sh  
+### Unit Tests
+- name: unit-test-greetingui
+  public: true
+  plan:
+  - get: pipeline-src
+    trigger: false
+  - get: greeting-ui-src
+    trigger: true
+  - task: run-unit-test-greetingui
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: alpine
+      params:
+        APP_NAME: greeting-ui
+      inputs:
+      - name: pipeline-src
+      run:
+        path: pipeline-src/pipeline/ci/tasks/run-unit-tests.sh
+- name: unit-test-fortune
+  public: true
+  plan:
+  - get: pipeline-src
+    trigger: false
+  - get: fortune-service-src
+    trigger: true
+  - task: run-unit-test-fortune-service
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: alpine
+      params:
+        APP_NAME: fortune-service
+      inputs:
+      - name: pipeline-src
+      run:
+        path: pipeline-src/pipeline/ci/tasks/run-unit-tests.sh
+
+
+### Build Artifacts
+- name: build-greeting-app
+  serial: true
+  public: true
+  plan:
+  - get: pipeline-src
+    trigger: true
+    passed:
+      - unit-test-greetingui
+  - get: greeting-ui-src
+    trigger: true
+  - task: build-greeting-ui
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: maven
+          tag: "3.5-jdk-8-slim"
+      params:
+        APP_NAME: greeting-ui
+      inputs:
+      - name: pipeline-src
+      - name: greeting-ui-src
+      outputs:
+      - name: greeting-ui-bundle
+      run:
+        path: pipeline-src/pipeline/ci/tasks/build-artifact.sh
+  - task: parse-manifest
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: quay.io/alekssaul/yaml2json
+          tag: "v1.0"
+      params:
+        APP_NAME: greeting-ui
+      inputs:
+      - name: pipeline-src
+      - name: greeting-ui-bundle
+      outputs:
+      - name: greeting-ui
+      run:
+        path: pipeline-src/pipeline/ci/tasks/parse-manifest.sh
+  - task: upload-greeting-ui-src
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: czero/cflinuxfs2
+      params:
+        APP_NAME: greeting-ui
+        GCP_SERVICE_ACCOUNT_KEY: {{gcp_service_account_key}}
+        GCP_BUCKET: {{GCP_BUCKET}}
+      inputs:
+      - name: pipeline-src
+      - name: greeting-ui-src
+      - name: greeting-ui
+      run:
+        path: pipeline-src/pipeline/ci/tasks/upload-artifact.sh
+- name: build-fortune-app
+  serial: true
+  public: true
+  plan:
+  - get: pipeline-src
+    trigger: true
+    passed:
+      - unit-test-fortune
+  - get: fortune-service-src
+    trigger: true
+  - task: build-fortune-service
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: maven
+          tag: "3.5-jdk-8-slim"
+      params:
+        APP_NAME: fortune-service
+      inputs:
+      - name: pipeline-src
+      - name: fortune-service-src
+      outputs:
+      - name: fortune-service-bundle
+      run:
+        path: pipeline-src/pipeline/ci/tasks/build-artifact.sh
+  - task: parse-manifest
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: quay.io/alekssaul/yaml2json
+          tag: "v1.0"
+      params:
+        APP_NAME: fortune-service
+      inputs:
+      - name: pipeline-src
+      - name: fortune-service-bundle
+      outputs:
+      - name: fortune-service
+      run:
+        path: pipeline-src/pipeline/ci/tasks/parse-manifest.sh
+  - task: upload-fortune-service-src
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: czero/cflinuxfs2
+      params:
+        APP_NAME: fortune-service
+        GCP_SERVICE_ACCOUNT_KEY: {{gcp_service_account_key}}
+        GCP_BUCKET: {{GCP_BUCKET}}
+      inputs:
+      - name: pipeline-src
+      - name: fortune-service-src
+      - name: fortune-service
+      run:
+        path: pipeline-src/pipeline/ci/tasks/upload-artifact.sh
+
+
+### Request Services
+- name: cf-create-services-greeting
+  serial: true
+  public: true
+  plan:
+  - get: pipeline-src
+    trigger: true
+    passed:
+      - build-greeting-app
+  - get: greeting-ui-src
+    trigger: true
+  - task: create-services
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: czero/cflinuxfs2
+      params:
+        GCP_SERVICE_ACCOUNT_KEY: {{gcp_service_account_key}}
+        GCP_BUCKET: {{GCP_BUCKET}}
+        APP_NAME: greeting-ui
+        PWS_API: {{pws-api}}
+        PWS_ORG: {{pws-organization}}
+        PWS_USER: {{deploy-username}}
+        PWS_PWD: {{deploy-password}}
+        PWS_SPACE: {{pws-space}}
+        GIT_URI: {{GIT_APP-CONFIG}}
+      inputs:
+      - name: pipeline-src
+      - name: greeting-ui-src
+      run:
+        path: pipeline-src/pipeline/ci/tasks/create-service.sh
+- name: cf-create-services-fortune
+  serial: true
+  public: true
+  plan:
+  - get: pipeline-src
+    trigger: true
+    passed:
+      - build-fortune-app
+  - get: fortune-service-src
+    trigger: true
+  - task: create-services
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: czero/cflinuxfs2
+      params:
+        GCP_SERVICE_ACCOUNT_KEY: {{gcp_service_account_key}}
+        GCP_BUCKET: {{GCP_BUCKET}}
+        APP_NAME: fortune-service
+        PWS_API: {{pws-api}}
+        PWS_ORG: {{pws-organization}}
+        PWS_USER: {{deploy-username}}
+        PWS_PWD: {{deploy-password}}
+        PWS_SPACE: {{pws-space}}
+        GIT_URI: {{GIT_APP-CONFIG}}
+      inputs:
+      - name: pipeline-src
+      - name: fortune-service-src
+      run:
+        path: pipeline-src/pipeline/ci/tasks/create-service.sh
+
+
+### CF Push
+- name: cf-push-greeting-src
+  serial: true
+  public: true
+  plan:
+  - get: pipeline-src
+    trigger: true
+    passed:
+      - cf-create-services-greeting
+  - get: greeting-ui-src
+    trigger: true
+  - task: push-app-greeting
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: czero/cflinuxfs2
+      params:
+        GCP_SERVICE_ACCOUNT_KEY: {{gcp_service_account_key}}
+        GCP_BUCKET: {{GCP_BUCKET}}
+        APP_NAME: greeting-ui
+        PWS_API: {{pws-api}}
+        PWS_ORG: {{pws-organization}}
+        PWS_USER: {{deploy-username}}
+        PWS_PWD: {{deploy-password}}
+        PWS_SPACE: {{pws-space}}
+        GIT_URI: {{GIT_APP-CONFIG}}
+      inputs:
+      - name: pipeline-src
+      - name: greeting-ui-src
+      outputs:
+      - name: greeting-ui
+      run:
+        path: pipeline-src/pipeline/ci/tasks/push-app.sh
+- name: cf-push-fortune-service-src
+  serial: true
+  public: true
+  plan:
+  - get: pipeline-src
+    trigger: true
+    passed:
+      - cf-create-services-fortune
+  - get: fortune-service-src
+    trigger: true
+  - task: push-app-fortune
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: czero/cflinuxfs2
+      params:
+        GCP_SERVICE_ACCOUNT_KEY: {{gcp_service_account_key}}
+        GCP_BUCKET: {{GCP_BUCKET}}
+        APP_NAME: fortune-service
+        PWS_API: {{pws-api}}
+        PWS_ORG: {{pws-organization}}
+        PWS_USER: {{deploy-username}}
+        PWS_PWD: {{deploy-password}}
+        PWS_SPACE: {{pws-space}}
+        GIT_URI: {{GIT_APP-CONFIG}}
+      inputs:
+      - name: pipeline-src
+      - name: fortune-service-src
+      outputs:
+      - name: fortune-service
+      run:
+        path: pipeline-src/pipeline/ci/tasks/push-app.sh
+
+
+### C2C Integration Task
+- name: c2c-integration-task
+  serial: true
+  public: true
+  plan:
+  - get: pipeline-src
+    trigger: true
+    passed:
+      - cf-push-fortune-service-src
+      - cf-push-greeting-src
+  - task: ingregration
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: czero/cflinuxfs2
+      params:
+        PWS_API: {{pws-api}}
+        PWS_ORG: {{pws-organization}}
+        PWS_USER: {{deploy-username}}
+        PWS_PWD: {{deploy-password}}
+        PWS_SPACE: {{pws-space}}
+        C2C: {{C2C}}
+      inputs:
+      - name: pipeline-src
+      run:
+        path: pipeline-src/pipeline/ci/tasks/c2c-integration-task.sh
+
+
+### Smoke Tests
+- name: greeting-smoketest
+  serial: true
+  public: true
+  plan:
+  - get: pipeline-src
+    trigger: true
+    passed:
+      - c2c-integration-task
+  - task: smoke-test
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: czero/cflinuxfs2
+      params:
+        APP_NAME: greeting-ui
+        PWS_API: {{pws-api}}
+        PWS_ORG: {{pws-organization}}
+        PWS_USER: {{deploy-username}}
+        PWS_PWD: {{deploy-password}}
+        PWS_SPACE: {{pws-space}}
+      inputs:
+      - name: pipeline-src
+      run:
+        path: pipeline-src/pipeline/ci/tasks/smoke-test.sh
+      
+- name: fortune-service-smoketest
+  serial: true
+  public: true
+  plan:
+  - get: pipeline-src
+    trigger: true
+    passed:
+      - c2c-integration-task
+  - task: smoke-test
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: czero/cflinuxfs2
+      params:
+        APP_NAME: fortune-service
+        PWS_API: {{pws-api}}
+        PWS_ORG: {{pws-organization}}
+        PWS_USER: {{deploy-username}}
+        PWS_PWD: {{deploy-password}}
+        PWS_SPACE: {{pws-space}}
+      inputs:
+      - name: pipeline-src
+      run:
+        path: pipeline-src/pipeline/ci/tasks/smoke-test.sh
+
+### End to End testing
+- name: e2e-integration
+  serial: true
+  public: true
+  plan:
+  - get: pipeline-src
+    trigger: true
+    passed:
+      - fortune-service-smoketest
+      - greeting-smoketest
+  - task: e2e-integration-test
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: czero/cflinuxfs2
+      params:
+        PWS_API: {{pws-api}}
+        PWS_ORG: {{pws-organization}}
+        PWS_USER: {{deploy-username}}
+        PWS_PWD: {{deploy-password}}
+        PWS_SPACE: {{pws-space}}
+      inputs:
+      - name: pipeline-src
+      run:
+        path: pipeline-src/pipeline/ci/tasks/e2e-integration.sh
