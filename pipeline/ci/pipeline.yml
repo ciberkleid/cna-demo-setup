@@ -18,17 +18,17 @@ resources:
 - name: pipeline-src
   type: git
   source:
-    branch: dev
+    branch: {{pipeline-git-version}}
     uri: {{pipeline-git-url}}
 - name: greeting-ui-src
   type: git
   source:
-    branch: manifest
+    branch: {{service-A-git-version}}
     uri: {{service-A-git-url}}
 - name: fortune-service-src
   type: git
   source:
-    branch: manifest
+    branch: {{service-B-git-version}}
     uri: {{service-B-git-url}}
 
 resource_types:
