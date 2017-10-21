@@ -1,0 +1,17 @@
+{
+  "environment": "QA01",
+  "requester": "Aleks Saul",
+  "requester-email": "asaul@pivotal.io",
+  "applications": [
+    {
+      "name": "greeting-ui",
+      "gittag": "v0.1",
+      "gitrepo": "https://github.com/ciberkleid/greeting-ui.git"
+    },
+    {
+      "name": "fortune-service",
+      "gittag": "v0.1",
+      "gitrepo": "https://github.com/ciberkleid/fortune-service.git"
+    }
+  ]
+}

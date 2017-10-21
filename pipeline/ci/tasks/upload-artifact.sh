@@ -1,14 +1,22 @@
 #!/bin/bash
 
+set -xe
 
 echo $GCP_SERVICE_ACCOUNT_KEY > gcloud.key
 gcloud auth activate-service-account --key-file=gcloud.key
 
-set -xe
-# Get commit SHA of the application
-app_version=$(cat $APP_NAME-src/.git/ref)
-ls -a $APP_NAME/*
-cd $APP_NAME
-gsutil cp -r ./ "gs://${GCP_BUCKET}/$APP_NAME/$app_version"
+# Main
+echo Detecting Apps required
+app_spec_file=$(ls ./application-spec/ | grep -v generation | grep -v url)
+applications=$(jq '.applications[].name' ./application-spec/$app_spec_file  |  tr -d '"')
 
-set -xe
+ls -a application-bundle/*
+
+for application in $applications ; do 
+    
+    gittag=$(jq --arg v "$application" '.applications[] | select (.name | contains ($v)) | .gittag' ./application-spec/$app_spec_file | tr -d '"')
+
+    cd application-bundle/$application/$gittag
+    gsutil cp -r ./ "gs://${GCP_BUCKET}/artifacts/$application/$gittag"
+
+done
