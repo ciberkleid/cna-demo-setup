@@ -2,10 +2,14 @@
 
 cf api $PWS_API --skip-ssl-validation
 
-cf login -u $PWS_USER -p $PWS_PWD -o "$PWS_ORG" -s "$PWS_SPACE"
+app_spec_file=$(ls ./application-spec/ | grep -v generation | grep -v url)
+applications=$(jq '.applications[].name' ./application-spec/$app_spec_file  |  tr -d '"')
+environment=$(jq '.environment' ./application-spec/$app_spec_file  |  tr -d '"')
 
-echo Executing E2E Integration tests for $PWS_SPACE
+cf login -u $PWS_USER -p $PWS_PWD -o "$PWS_ORG" -s "$environment"
 
-cf routes | grep $PWS_SPACE | awk '{if(NR>1)print $2,$3}'
+echo Executing E2E Integration tests for $environment
 
-echo Finished E2E Integration tests for $PWS_SPACE
+cf routes | grep $environment | awk '{if(NR>1)print $2,$3}'
+
+echo Finished E2E Integration tests for $environment

@@ -6,17 +6,21 @@ gcloud auth activate-service-account --key-file=gcloud.key
 
 cf api $PWS_API --skip-ssl-validation
 
-cf login -u $PWS_USER -p $PWS_PWD -o "$PWS_ORG" -s "$PWS_SPACE"
-
 echo Detecting Apps required
 app_spec_file=$(ls ./application-spec/ | grep -v generation | grep -v url)
 applications=$(jq '.applications[].name' ./application-spec/$app_spec_file  |  tr -d '"')
+environment=$(jq '.environment' ./application-spec/$app_spec_file  |  tr -d '"')
 
+
+echo -ne '\n' | cf login -u $PWS_USER -p $PWS_PWD -o "$PWS_ORG" 
+(cf spaces | grep $environment) || cf create-space "$environment"
+cf target -s "$environment"
 
 for application in $applications ; do
-    gsutil cp "gs://${GCP_BUCKET}/artifacts/$application/$gittag/services.txt" ./
-
-    services=$(cat services.txt)
+    gittag=$(jq --arg v "$application" '.applications[] | select (.name | contains ($v)) | .gittag' ./application-spec/$app_spec_file | tr -d '"')
+    gsutil cp "gs://${GCP_BUCKET}/artifacts/$application/$gittag/$application-$gittag-services.txt" ./
+    
+    services=$(cat $application-$gittag-services.txt)
 
     # Create Config Server JSON Config File
     echo "{\"git\": {\"uri\": \"${GIT_URI}\"}}" > cloud-config-uri.json

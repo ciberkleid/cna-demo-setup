@@ -1,7 +1,7 @@
 groups:
 - name: main
   jobs:
-  - init-environment
+  - destroy-environment
   - execute-unit-tests
   - build-app
   - create-services
@@ -29,7 +29,7 @@ resource_types:
 
 jobs:
 ### Init Environment
-- name: init-environment
+- name: destroy-environment
   public: true
   plan:
   - get: pipeline
@@ -143,11 +143,11 @@ jobs:
   public: true
   plan:
   - get: pipeline
-    trigger: false
+    trigger: true
     passed:
       - build-app
   - get: application-spec
-    trigger: false
+    trigger: true
   - task: create-services
     config:
       platform: linux
@@ -175,11 +175,10 @@ jobs:
   public: true
   plan:
   - get: pipeline
-    trigger: false
+    trigger: true
     passed:
       - create-services
-  - get: application-spec
-    trigger: false
+  - get: application-spec    
   - task: push-app-greeting
     config:
       platform: linux
@@ -199,20 +198,19 @@ jobs:
         GIT_URI: {{GIT_APP-CONFIG}}
       inputs:
       - name: pipeline
-      - name: application-spec
-      outputs:
-      - name: greeting-ui
+      - name: application-spec      
       run:
         path: pipeline/pipeline/ci/tasks/push-app.sh
-### C2C Integration Task
+### Set Environment Requirements
 - name: set-environment-requirements
   serial: true
   public: true
   plan:
   - get: pipeline
-    trigger: false
+    trigger: true
     passed:
       - deploy-app
+  - get: application-spec
   - task: ingregration
     config:
       platform: linux
@@ -229,8 +227,7 @@ jobs:
         C2C: {{C2C}}
       inputs:
       - name: pipeline
-      outputs:
-      - name: greeting-ui
+      - name: application-spec      
       run:
         path: pipeline/pipeline/ci/tasks/set-environment-requirements.sh
 ### Smoke Tests
@@ -239,7 +236,7 @@ jobs:
   public: true
   plan:
   - get: pipeline
-    trigger: false
+    trigger: true
     passed:
       - set-environment-requirements
   - task: smoke-test
@@ -249,8 +246,7 @@ jobs:
         type: docker-image
         source:
           repository: czero/cflinuxfs2
-      params:
-        APP_NAME: greeting-ui
+      params:        
         PWS_API: {{pws-api}}
         PWS_ORG: {{pws-organization}}
         PWS_USER: {{deploy-username}}

@@ -16,7 +16,6 @@ for application in $applications ; do
     
     gittag=$(jq --arg v "$application" '.applications[] | select (.name | contains ($v)) | .gittag' ./application-spec/$app_spec_file | tr -d '"')
 
-    cd application-bundle/$application/$gittag
-    gsutil cp -r ./ "gs://${GCP_BUCKET}/artifacts/$application/$gittag"
-
+    gsutil cp -r application-bundle/$application/$gittag/* "gs://${GCP_BUCKET}/artifacts/$application/$gittag"
+    
 done

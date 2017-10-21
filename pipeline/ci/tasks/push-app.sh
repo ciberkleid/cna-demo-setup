@@ -2,22 +2,29 @@
 
 cf api $PWS_API --skip-ssl-validation
 
-cf login -u $PWS_USER -p $PWS_PWD -o "$PWS_ORG" -s "$PWS_SPACE"
-
 echo $GCP_SERVICE_ACCOUNT_KEY > gcloud.key
 gcloud auth activate-service-account --key-file=gcloud.key
 
-# Get commit SHA of the application
-app_version=$(cat $APP_NAME-src/.git/ref)
-
-gsutil cp -R "gs://${GCP_BUCKET}/$APP_NAME/$app_version/*" $APP_NAME/
-
 set -xe
 
-pushd $APP_NAME
+echo Detecting Apps required
+app_spec_file=$(ls ./application-spec/ | grep -v generation | grep -v url)
+applications=$(jq '.applications[].name' ./application-spec/$app_spec_file  |  tr -d '"')
+environment=$(jq '.environment' ./application-spec/$app_spec_file  |  tr -d '"')
 
-cf push -f manifest.yml --no-start
+cf login -u $PWS_USER -p $PWS_PWD -o "$PWS_ORG" -s "$environment"
 
-cf set-env ${APP_NAME} TRUST_CERTS $PWS_API
+for application in $applications ; do 
+    gittag=$(jq --arg v "$application" '.applications[] | select (.name | contains ($v)) | .gittag' ./application-spec/$app_spec_file | tr -d '"')
+    mkdir -p app
+    gsutil cp -R "gs://${GCP_BUCKET}/artifacts/$application/$gittag/*" app/
 
-cf start $APP_NAME
+    cd app    
+    sed -i "/path/c\  path: $application-$gittag.jar" $application-$gittag-manifest.yml
+    cf push -f $application-$gittag-manifest.yml --no-start
+    cf set-env $application TRUST_CERTS $PWS_API
+    cf start $application
+
+    cd ..
+    rm -rf app
+done
