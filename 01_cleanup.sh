@@ -11,4 +11,5 @@ if [[ $SERVICES == "Y" ]]; then
   cf delete-service cloud-bus -f
   cf delete-service service-registry -f
   cf delete-service circuit-breaker-dashboard -f
+  cf delete-service fortune-db -f
 fi

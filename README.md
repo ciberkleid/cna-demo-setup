@@ -33,6 +33,8 @@ Answer the prompts from the script:
 * Choose whether or not to leverage container-to-container networking
     * If 'Y', make sure you have the cf CLI 'network-policy-plugin' installed (see https://docs.pivotal.io/pivotalcf/1-11/devguide/deploy-apps/cf-networking.html).
     * Note that at this time, you must set C2C=N in order to demo distributed tracing in PCF Metrics.
+* Choose whether or not to use an in-memory database for fortune-service.
+    * The default is 'N', in which case the script will create a mysql instance for the fortunes database. Either way, the app will populate the db with fortunes.
 * Choose whether or not to build the apps
     * If 'Y', the script will run "mvn clean install" for both fortune-service and greeting-ui.
 
