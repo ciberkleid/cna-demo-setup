@@ -38,13 +38,18 @@ if [[ $BUILD == "Y" ]]; then
 fi
 
 # Wait until services are ready
-i=`cf services | grep "in progress" | wc -l`
-while [ $i -gt 0 ]
-  do
-    sleep 5
-    echo "Waiting for services to initialize..."
-    i=`cf services | grep "in progress" | wc -l`
-  done
+while cf services | grep 'create in progress'
+do
+  sleep 10
+  echo "Waiting for services to initialize..."
+done
+
+# Check to see if any services failed to create
+if cf services | grep 'create failed'; then
+  echo "Service initialization - failed. Exiting."
+  return 1
+fi
+echo "Service initialization - successful"
 
 # Push apps
 cf push -f $MANIFEST --no-start
