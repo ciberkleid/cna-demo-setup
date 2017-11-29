@@ -7,7 +7,7 @@ echo "Build apps? [N]: "
 read BUILD
 
 # Set variables
-CF_API=`cf api | head -1 | cut -c 25-${lastIndex}`
+CF_API=`cf api | head -1 | cut -c 25-`
 GIT_URI=${GIT_URI:-https://github.com/ciberkleid/app-config}
 C2C=${C2C:-Y}
 BUILD=${BUILD:-N}
