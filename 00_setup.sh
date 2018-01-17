@@ -58,9 +58,11 @@ cf push -f $MANIFEST --no-start
 cf set-env fortune-service TRUST_CERTS $CF_API
 cf set-env greeting-ui TRUST_CERTS $CF_API
 if [[ $C2C == "Y" ]]; then
-  cf set-env fortune-service SPRING_PROFILES_ACTIVE c2c
+  cf set-env fortune-service SPRING_PROFILES_ACTIVE c2c,ddlupdate
   cf set-env greeting-ui SPRING_PROFILES_ACTIVE c2c
   cf allow-access greeting-ui fortune-service --protocol tcp --port 8080
+else
+  cf set-env fortune-service SPRING_PROFILES_ACTIVE ddlupdate
 fi
 
 # Start apps
