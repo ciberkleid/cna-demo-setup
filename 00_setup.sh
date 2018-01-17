@@ -1,7 +1,7 @@
 # Get user input:
 echo "Enter the Config Server URI [https://github.com/ciberkleid/app-config]: "
 read GIT_URI
-echo "Enable C2C Networking? [Y]: "
+echo "Enable C2C Networking? [N]: "
 read C2C
 echo "Build apps? [N]: "
 read BUILD
@@ -9,7 +9,7 @@ read BUILD
 # Set variables
 CF_API=`cf api | head -1 | cut -c 25-`
 GIT_URI=${GIT_URI:-https://github.com/ciberkleid/app-config}
-C2C=${C2C:-Y}
+C2C=${C2C:-N}
 BUILD=${BUILD:-N}
 MANIFEST=manifest.yml
 
@@ -40,7 +40,7 @@ fi
 # Wait until services are ready
 while cf services | grep 'create in progress'
 do
-  sleep 10
+  sleep 20
   echo "Waiting for services to initialize..."
 done
 
