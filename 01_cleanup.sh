@@ -6,6 +6,8 @@ SERVICES=${SERVICES:-Y}
 cf delete greeting-ui -f -r
 cf delete fortune-service -f -r
 
+cf delete-orphaned-routes -f
+
 if [[ $SERVICES == "Y" ]]; then
   cf delete-service config-server -f
   cf delete-service cloud-bus -f

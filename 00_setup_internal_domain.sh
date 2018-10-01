@@ -1,24 +1,20 @@
 # Get user input:
 echo "Enter the Config Server URI [https://github.com/ciberkleid/app-config]: "
 read GIT_URI
-echo "Enable C2C Networking? [N]: "
-read C2C
 echo "Build apps? [N]: "
 read BUILD
 
 # Set variables
 CF_API=`cf api | head -1 | cut -c 25-`
 GIT_URI=${GIT_URI:-https://github.com/ciberkleid/app-config}
-C2C=${C2C:-N}
 BUILD=${BUILD:-N}
-MANIFEST=manifest.yml
+MANIFEST=manifest-mesh.yml
 
 # Create Config Server JSON Config File
 echo "{\"git\": {\"uri\": \"${GIT_URI}\"}}" > cloud-config-uri.json
 
 # Create services
 cf create-service p-config-server trial config-server -c cloud-config-uri.json
-cf create-service p-service-registry trial service-registry
 cf create-service p-circuit-breaker-dashboard trial circuit-breaker-dashboard
 if [[ $CF_API == *"api.run.pivotal.io"* ]]; then
   cf create-service cloudamqp lemur cloud-bus
@@ -31,9 +27,9 @@ fi
 # Build apps
 if [[ $BUILD == "Y" ]]; then
   cd ../fortune-service
-  ./mvnw clean install
+  ./mvnw clean install -DskipTests
   cd ../greeting-ui
-  ./mvnw clean install
+  ./mvnw clean install -DskipTests
   cd ../cna-demo-setup
 fi
 
@@ -54,16 +50,11 @@ echo "Service initialization - successful"
 # Push apps
 cf push -f $MANIFEST --no-start
 
-# Set env variables and optionally enable c2c access
-#cf set-env fortune-service TRUST_CERTS $CF_API
-#cf set-env greeting-ui TRUST_CERTS $CF_API
-if [[ $C2C == "Y" ]]; then
-  cf set-env fortune-service SPRING_PROFILES_ACTIVE c2c,ddlupdate
-  cf set-env greeting-ui SPRING_PROFILES_ACTIVE c2c
-  cf add-network-policy greeting-ui --destination-app fortune-service --protocol tcp --port 8080
-else
-  cf set-env fortune-service SPRING_PROFILES_ACTIVE ddlupdate
-fi
+# Enable mesh access and flyway
+cf add-network-policy greeting-ui --destination-app fortune-service --protocol tcp --port 8080
+cf set-env greeting-ui SPRING_PROFILES_ACTIVE mesh
+cf set-env fortune-service SPRING_PROFILES_ACTIVE flyway,mesh
+
 
 # Start apps
 cf start fortune-service
