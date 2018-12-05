@@ -31,9 +31,9 @@ fi
 # Build apps
 if [[ $BUILD == "Y" ]]; then
   cd ../fortune-service
-  ./mvnw clean install
+  ./mvnw clean install -DskipTests
   cd ../greeting-ui
-  ./mvnw clean install
+  ./mvnw clean install -DskipTests
   cd ../cna-demo-setup
 fi
 
