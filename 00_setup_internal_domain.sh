@@ -50,13 +50,16 @@ fi
 echo "Service initialization - successful"
 
 # Push apps
+cd ../fortune-service
 cf push -f $MANIFEST --no-start
+cd ../greeting-ui
+cf push -f $MANIFEST --no-start
+cd ../cna-demo-setup
 
-# Enable mesh access and flyway
+# Enable mesh access
 cf add-network-policy greeting-ui --destination-app fortune-service --protocol tcp --port 8080
-cf set-env greeting-ui SPRING_PROFILES_ACTIVE mesh
-cf set-env fortune-service SPRING_PROFILES_ACTIVE flyway,mesh
-
+#cf set-env greeting-ui SPRING_PROFILES_ACTIVE mesh
+#cf set-env fortune-service SPRING_PROFILES_ACTIVE mesh
 
 # Start apps
 cf start fortune-service
