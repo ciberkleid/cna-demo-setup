@@ -72,14 +72,10 @@ else
 fi
 
 # Set env variables and optionally enable c2c access
-#cf set-env fortune-service TRUST_CERTS $CF_API
-#cf set-env greeting-ui TRUST_CERTS $CF_API
 if [[ $C2C == "Y" ]]; then
-  cf set-env fortune-service SPRING_PROFILES_ACTIVE c2c,flyway
+  cf set-env fortune-service SPRING_PROFILES_ACTIVE c2c
   cf set-env greeting-ui SPRING_PROFILES_ACTIVE c2c
   cf add-network-policy greeting-ui --destination-app fortune-service --protocol tcp --port 8080
-else
-  cf set-env fortune-service SPRING_PROFILES_ACTIVE flyway
 fi
 
 # Start apps
