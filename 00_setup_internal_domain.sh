@@ -14,14 +14,16 @@ MANIFEST=manifest-mesh.yml
 echo "{\"git\": {\"uri\": \"${GIT_URI}\"}}" > cloud-config-uri.json
 
 # Create services
-cf create-service p-config-server trial config-server -c cloud-config-uri.json
-cf create-service p-circuit-breaker-dashboard trial circuit-breaker-dashboard
 if [[ $CF_API == *"api.run.pivotal.io"* ]]; then
+  cf create-service p-config-server trial config-server -c cloud-config-uri.json
+  cf create-service p-circuit-breaker-dashboard trial circuit-breaker-dashboard
   cf create-service cloudamqp lemur cloud-bus
   cf create-service cleardb spark fortune-db
 else
-  cf create-service p-rabbitmq standard cloud-bus
-  cf create-service p-mysql 100mb fortune-db
+  cf create-service p-config-server standard config-server -c cloud-config-uri.json
+  cf create-service p-circuit-breaker-dashboard standard circuit-breaker-dashboard
+  cf create-service p.rabbitmq single-node-3.7 cloud-bus
+  cf create-service p.mysql db-small fortune-db
 fi
 
 # Build apps
