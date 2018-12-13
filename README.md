@@ -36,7 +36,7 @@ Answer the prompts from the script:
 * Choose whether or not to build the apps
     * If 'Y', the script will run "mvn clean install" for both fortune-service and greeting-ui.
 
-The script will create the necessary services and deploy the two applications to the targeted space. It will also set the TRUST_CERTS environment variable and, optionally, enable access between the apps for C2C networking.
+The script will create the necessary services and deploy the two applications to the targeted space. It will also optionally enable access between the apps for C2C networking using Eureka. Alternatively, the mesh setup script can be used for C2C networking using the default PCF internal domain.
 
 4. [Optional] To delete the apps, routes, and services created by the setup script, run the cleanup script. Answer the prompts to control if just apps and routes are deleted, or services as well.
 ```
