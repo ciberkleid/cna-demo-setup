@@ -31,10 +31,9 @@ Answer the prompts from the script:
 * Provide the git address to back the Config Server
     * The default value is https://github.com/ciberkleid/app-config. If you wish to set or change config values, fork this repo and enter the new value.
 * Choose whether or not to leverage container-to-container networking
-    * If 'Y', make sure you have the cf CLI 'network-policy-plugin' installed (see https://docs.pivotal.io/pivotalcf/1-11/devguide/deploy-apps/cf-networking.html).
     * Note that at this time, you must set C2C=N in order to demo distributed tracing in PCF Metrics.
 * Choose whether or not to build the apps
-    * If 'Y', the script will run "mvn clean install" for both fortune-service and greeting-ui.
+    * If 'Y', the script will run "./mvnw clean install" for both fortune-service and greeting-ui.
 
 The script will create the necessary services and deploy the two applications to the targeted space. It will also optionally enable access between the apps for C2C networking using Eureka. Alternatively, the mesh setup script can be used for C2C networking using the default PCF internal domain.
 
