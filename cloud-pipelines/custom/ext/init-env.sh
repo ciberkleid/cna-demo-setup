@@ -9,7 +9,7 @@ echo -e "\n\n########## Set up Cloud Pipelines extended environment ##########"
 export NUM_SOURCED_EXT_FILES=0
 source "${WORKSPACE_EXT}"/pipeline.sh
 source "${WORKSPACE_EXT}"/projectType/pipeline-maven.sh
-echo "NUM_SOURCED_EXT_FILES=${NUM_SOURCED_EXT_FILES}"
+echo "NUM_SOURCED_EXT_FILES=${NUM_SOURCED_CUSTOM_FILES}"
 
 echo -e "\n\n########## Set up maven repo environment ##########"
 export M2_SETTINGS_REPO_ID=bintray

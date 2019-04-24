@@ -15,7 +15,7 @@ fi
 export ENVIRONMENT=BUILD
 export CI=Jenkins
 
-#export ADDITIONAL_SCRIPTS_TARBALL_URL="https://github.com/ciberkleid/cna-demo-setup/raw/master/cloud-pipelines/dist/cloud-pipelines-scripts-ext.tar.gz"
+#export ADDITIONAL_SCRIPTS_TARBALL_URL="https://github.com/ciberkleid/cna-demo-setup/raw/master/cloud-pipelines/dist/cloud-pipelines-ext.tar.gz"
 
 source "${WORKSPACE}"/.git/tools/src/main/bash/pipeline.sh
 
@@ -23,8 +23,8 @@ echo -e "\n\n########## Set up Cloud Pipelines extended environment ##########"
 rm -rf .git/tools-ext && mkdir -p .git/tools-ext && cd "${WORKSPACE}"/.git/tools-ext && curl -Lk "https://github.com/ciberkleid/cna-demo-setup/raw/master/cloud-pipelines/dist/cloud-pipelines-ext.tar.gz" -o pipelines-ext.tar.gz && tar xf pipelines-ext.tar.gz --strip-components 1 && cd "${WORKSPACE}"
 
 export WORKSPACE_EXT="${WORKSPACE}/.git/tools-ext/ext"
+echo "WORKSPACE_EXT=${WORKSPACE_EXT}"
 
 source "${WORKSPACE_EXT}"/init-env.sh
 
-echo -e "\n\n########## ---------- Run job script ---------- ##########"
-"${WORKSPACE_EXT}"/build-and-upload-fortune-service.sh
+echo -e "\n\n########## ---------- End setup ---------- ##########"
