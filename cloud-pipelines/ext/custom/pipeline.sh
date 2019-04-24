@@ -18,7 +18,8 @@ function generateVersion() {
 	if [[ ! -z "${version}" ]]; then
 		echo "${version}"
 	else
-	    local version="${PROJECT_VERSION:-$(extractMavenProperty "project.version")}"
+	    #local version="${PROJECT_VERSION:-$(extractMavenProperty "project.version")}"
+	    local version="$(extractMavenProperty "project.version")"
 		local version=""
 		local commitTime="$(${GIT_BIN} show --no-patch --no-notes --pretty='%ct')"
 		commitTime="$(date -d @${commitTime} +'%Y%m%d.%H%M%SZ')"
