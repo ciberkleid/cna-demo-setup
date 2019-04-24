@@ -8,6 +8,8 @@ set -o pipefail
 # Contains customized common pipeline functions
 # }}}
 
+NUM_SOURCED_EXT_FILES=$((NUM_SOURCED_EXT_FILES + 1))
+
 # FUNCTION: generateVersion {{{
 # Generates version
 # Returns version number.

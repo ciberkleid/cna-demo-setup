@@ -6,9 +6,10 @@
 # set the M2_SETTINGS_REPO_PASSWORD
 
 echo -e "\n\n########## Set up Cloud Pipelines extended environment ##########"
+export NUM_SOURCED_EXT_FILES=0
 "${WORKSPACE_EXT}"/pipeline.sh
 "${WORKSPACE_EXT}"/projectType/pipeline-maven.sh
-
+echo "NUM_SOURCED_EXT_FILES=${NUM_SOURCED_EXT_FILES}"
 
 echo -e "\n\n########## Set up maven repo environment ##########"
 export M2_SETTINGS_REPO_ID=bintray
@@ -26,6 +27,7 @@ export REPO_WITH_BINARIES=https://${M2_SETTINGS_REPO_USERNAME}:${M2_SETTINGS_REP
 
 echo -e "\n\n########## Set up common project environment ##########"
 export PROJECT_NAME="$(extractMavenProperty "project.artifactId")"
+echo "PROJECT_NAME=[${PROJECT_NAME}]"
 export REPO_WITH_BINARIES_FOR_UPLOAD="${REPO_WITH_BINARIES_FOR_UPLOAD}/${PROJECT_NAME}"
 export BUILD_OPTIONS="-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
 export STUBRUNNER_SNAPSHOT_CHECK_SKIP=true

@@ -8,6 +8,8 @@ set -o pipefail
 # Contains customized Maven related build functions
 # }}}
 
+NUM_SOURCED_EXT_FILES=$((NUM_SOURCED_EXT_FILES + 1))
+
 # FUNCTION: runDefaultTests {{{
 # Will run the tests with [default] profile. Will not build or upload artifacts.
 function runDefaultTests() {

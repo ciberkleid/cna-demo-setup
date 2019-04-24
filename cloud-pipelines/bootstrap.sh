@@ -26,5 +26,5 @@ export WORKSPACE_EXT="${WORKSPACE}/.git/tools-ext/ext"
 
 source "${WORKSPACE_EXT}"/init-env.sh
 
-echo -e "\n\n########## Run job script ##########"
+echo -e "\n\n########## ---------- Run job script ---------- ##########"
 "${WORKSPACE_EXT}"/build-and-upload-fortune-service.sh
