@@ -20,10 +20,10 @@ export CI=Jenkins
 source "${WORKSPACE}"/.git/tools/src/main/bash/pipeline.sh
 
 echo -e "\n\n########## ---------- Set up Cloud Pipelines Extensions ---------- ##########"
-rm -rf .git/tools-ext && mkdir -p .git/tools-ext && cd "${WORKSPACE}"/.git/tools-ext && curl -Lk "https://github.com/ciberkleid/cna-demo-setup/raw/master/cloud-pipelines/dist/cloud-pipelines-ext.tar.gz" -o pipelines-ext.tar.gz && tar xf pipelines-ext.tar.gz --strip-components 1 && cd "${WORKSPACE}"
+rm -rf .git/tools-ext && mkdir -p .git/tools-ext && cd "${WORKSPACE}"/.git/tools-ext && curl -Lk "https://github.com/ciberkleid/cna-demo-setup/raw/master/cloud-pipelines/dist/cloud-pipelines-ext.tar.gz" -o pipelines-ext.tar.gz && tar xf pipelines-ext.tar.gz && cd "${WORKSPACE}"
 
 export WORKSPACE_EXT="${WORKSPACE}/.git/tools-ext/custom"
-echo "\nExtensions can be accessed using WORKSPACE_EXT env variable"
+echo -e "\nExtensions can be accessed using WORKSPACE_EXT env variable"
 echo "WORKSPACE_EXT=${WORKSPACE_EXT}"
 
 source "${WORKSPACE_EXT}"/init-env.sh
