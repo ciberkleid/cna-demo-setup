@@ -6,8 +6,8 @@
 # set the M2_SETTINGS_REPO_PASSWORD
 
 echo -e "\n\n########## Set up Cloud Pipelines extended environment ##########"
-source "${WORKSPACE}"/.git/tools/src/main/bash/custom/ext/pipeline.sh
-source "${WORKSPACE}"/.git/tools/src/main/bash/custom/ext/projectType/pipeline-maven.sh
+"${WORKSPACE_EXT}"/pipeline.sh
+"${WORKSPACE_EXT}"/projectType/pipeline-maven.sh
 
 
 echo -e "\n\n########## Set up maven repo environment ##########"
