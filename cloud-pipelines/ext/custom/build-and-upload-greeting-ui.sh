@@ -47,7 +47,7 @@ fi
 # Start with index=1 (index=0 will be tested during the build)
 for ((i=1; i<${#stubrunnerIDsArray[@]}; ++i)); do
 	STUBS="${stubrunnerIDsArray[$i]}"
-    echo -e "\nTesting with stubs[$i]: ${STUBS}\n";
+    echo -e "\n\n##### Testing with stubs[$i]: ${STUBS}\n";
     runDefaultTests
 done
 unset IFS

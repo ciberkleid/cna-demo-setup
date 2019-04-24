@@ -41,7 +41,7 @@ else
     releaseTagsArray=($RELEASE_TAGS)
     for ((i=0; i<${#releaseTagsArray[@]}; ++i)); do
         version=${releaseTagsArray[$i]#"prod/${PROJECT_NAME}/"}
-        echo -e "\n\n\nTesting with API client from version [${version}]\n\n\n";
+        echo -e "\n\n##### Testing with API client from version [${version}]\n\n\n";
         executeApiCompatibilityCheck "${version}"
     done
     unset IFS
@@ -67,7 +67,7 @@ else
         tag="${releaseTagsArray[$i]}"
         git checkout ${tag}
         # version=${releaseTagsArray[$i]#"prod/${PROJECT_NAME}/"}
-        echo -e "\n\n\nTesting [${tag}] against current DB schema [git_commit=${GIT_COMMIT}]\n\n\n";
+        echo -e "\n\n##### Testing [${tag}] against current DB schema [git_commit=${GIT_COMMIT}]\n\n\n";
         rm -r src/main/resources/db/migration
         mkdir -p src/main/resources/db
         cp -r .git/db-${GIT_COMMIT}/migration src/main/resources/db/migration
