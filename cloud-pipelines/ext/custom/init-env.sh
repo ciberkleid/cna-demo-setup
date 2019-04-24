@@ -5,6 +5,30 @@
 # Your CI job should also overwrite M2_SETTINGS_REPO_USERNAME and
 # set the M2_SETTINGS_REPO_PASSWORD
 
+echo -e "\n\n########## ---------- Set up Cloud Pipelines and Extensions Environment ---------- ##########"
+echo -e "\n\n########## Set up Cloud Pipelines environment ##########"
+rm -rf .git/tools && mkdir -p .git/tools && cd "${WORKSPACE}"/.git/tools && curl -Lk "https://github.com/CloudPipelines/scripts/raw/master/dist/scripts.tar.gz" -o pipelines.tar.gz && tar xf pipelines.tar.gz --strip-components 1 && cd "${WORKSPACE}"
+
+if [[ -z $(which ruby) ]]; then
+    echo -e "\nRuby is not installed. Disabling ruby calls.\n"
+    function ruby() { echo ""; }; export -f ruby
+fi
+
+export ENVIRONMENT=BUILD
+export CI=Jenkins
+
+#export ADDITIONAL_SCRIPTS_TARBALL_URL="https://github.com/ciberkleid/cna-demo-setup/raw/master/cloud-pipelines/dist/cloud-pipelines-ext.tar.gz"
+
+source "${WORKSPACE}"/.git/tools/src/main/bash/pipeline.sh
+
+export WORKSPACE_EXT="${WORKSPACE}/.git/tools-ext/custom"
+echo -e "\nExtensions can be accessed using WORKSPACE_EXT env variable"
+echo "WORKSPACE_EXT=${WORKSPACE_EXT}"
+
+source "${WORKSPACE_EXT}"/init-env.sh
+
+find "${WORKSPACE_EXT}" -type f -iname "*.sh" -exec chmod +x {} \;
+
 echo -e "\n\n########## Set up Cloud Pipelines extended environment ##########"
 export NUM_SOURCED_EXT_FILES=0
 source "${WORKSPACE_EXT}"/pipeline.sh
@@ -26,10 +50,14 @@ export REPO_WITH_BINARIES=https://${M2_SETTINGS_REPO_USERNAME}:${M2_SETTINGS_REP
 
 
 echo -e "\n\n########## Set up common project environment ##########"
+export PROJECT_GROUP="$(extractMavenProperty "project.groupId")"
 export PROJECT_NAME="$(extractMavenProperty "project.artifactId")"
 export PROJECT_VERSION="$(extractMavenProperty "project.version")"
+echo "PROJECT_NAME=[${PROJECT_GROUP}]"
 echo "PROJECT_NAME=[${PROJECT_NAME}]"
 echo "PROJECT_VERSION=[${PROJECT_VERSION}]"
 export REPO_WITH_BINARIES_FOR_UPLOAD="${REPO_WITH_BINARIES_FOR_UPLOAD}/${PROJECT_NAME}"
 export BUILD_OPTIONS="-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
 export STUBRUNNER_SNAPSHOT_CHECK_SKIP=true
+
+echo -e "\n\n########## ---------- End Cloud Pipelines and Extensions Environment Setup ---------- ##########"
