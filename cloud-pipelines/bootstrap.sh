@@ -28,4 +28,6 @@ echo "WORKSPACE_EXT=${WORKSPACE_EXT}"
 
 source "${WORKSPACE_EXT}"/init-env.sh
 
+find "${WORKSPACE_EXT}" -type f -iname "*.sh" -exec chmod +x {} \;
+
 echo -e "\n\n########## ---------- End Cloud Pipelines & Extensions setup ---------- ##########"
