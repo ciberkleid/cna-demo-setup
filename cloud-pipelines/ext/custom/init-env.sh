@@ -27,7 +27,9 @@ export REPO_WITH_BINARIES=https://${M2_SETTINGS_REPO_USERNAME}:${M2_SETTINGS_REP
 
 echo -e "\n\n########## Set up common project environment ##########"
 export PROJECT_NAME="$(extractMavenProperty "project.artifactId")"
+export PROJECT_VERSION="$(extractMavenProperty "project.version")"
 echo "PROJECT_NAME=[${PROJECT_NAME}]"
+echo "PROJECT_VERSION=[${PROJECT_VERSION}]"
 export REPO_WITH_BINARIES_FOR_UPLOAD="${REPO_WITH_BINARIES_FOR_UPLOAD}/${PROJECT_NAME}"
 export BUILD_OPTIONS="-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
 export STUBRUNNER_SNAPSHOT_CHECK_SKIP=true

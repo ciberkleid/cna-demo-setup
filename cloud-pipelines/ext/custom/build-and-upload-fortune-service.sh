@@ -4,7 +4,6 @@ set -o errexit
 
 echo -e "\n\n########## Generate version for this build ##########"
 echo "Project Name [${PROJECT_NAME}]"
-export PROJECT_VERSION="$(extractMavenProperty "project.version")"
 echo "Project Version [${PROJECT_VERSION}]"
 export PASSED_PIPELINE_VERSION=$(generateVersion)
 echo "Generated Version [${PASSED_PIPELINE_VERSION}]"
