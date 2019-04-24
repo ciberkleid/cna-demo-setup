@@ -30,4 +30,4 @@ cloud-config-uri.json
 hs_err_pid*
 
 #Exceptions
-!cloud-pipelines/dist/cloud-pipelines-scripts-ext.tar.gz
+!cloud-pipelines/dist/cloud-pipelines-ext.tar.gz 
