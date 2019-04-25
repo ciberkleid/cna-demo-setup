@@ -23,4 +23,5 @@ rm -rf .git/tools-ext && mkdir -p .git/tools-ext && cd "${WORKSPACE}"/.git/tools
 source "${WORKSPACE}"/.git/tools-ext/custom/init-env.sh
 
 echo -e "\n\n########## Run job script ##########"
+echo "Executing script: [${jobScript}]"
 source "${WORKSPACE_EXT}"/${jobScript}
