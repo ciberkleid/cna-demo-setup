@@ -1,7 +1,5 @@
 # cna-demo: CI/CD pipeline
-For instruction on how to manually deploy this demo app to Pivotal Cloud Foundry, please see the [parent README](../README.md).
-
-This section explains how to set up a CI/CD pipeline for automated deployment of the applications.
+This section explains how to set up a CI/CD pipeline for automated deployment of this demo application. (For instructions on how to manually deploy this demo to Pivotal Cloud Foundry, please see the [parent README](../README.md).)
  
 The pipeline in this setup is intended as a reference pipeline that accomplishes two main objectives:
 1. Leverage the key ideas and benefits of the [Cloud Pipelines](https://github.com/cloudpipelines) project to establish baseline best practices and harden the CI portion of the pipeline
