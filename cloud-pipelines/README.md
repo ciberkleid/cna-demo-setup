@@ -92,9 +92,11 @@ For all jobs, it is recommended to configure "General->Discard old builds" to li
 
 - Select "Source Code Management->Git" and set:
     - Repository URL: https://github.com/YOUR-ORG/fortune-service.git
-    - Credentials: (set up global credential of type SSH - needed to push tags)
+    - Credentials: the git ssh credential you created previously
     - Branch Specifier: */cloud-pipelines-spinnaker
-- Select "Build->Execute shell" and copy the body of the [bootstrap](./bootstrap.sh) script. Update the M2_SETTINGS_REPO_USERNAME and M2_SETTINGS_REPO_ROOT, as appropriate, and set jobScript="prod-tag-release.sh"
+- Select "Build->Execute shell" and copy the body of the [bootstrap](./bootstrap.sh) script
+    - Update the M2_SETTINGS_REPO_USERNAME and M2_SETTINGS_REPO_ROOT, as appropriate
+    - Set jobScript="prod-tag-release.sh"
 - Select "Post-build Actions->Git Publisher. Set:
   - Push Only If Build Succeeds: true (checked)
   - Tags->Tags to push:         ${TAG_PREFIX}${TRIGGER_BUILD_VERSION} # Jenkins hack: hard code TAG_PREFIX as prod/greeting-ui
@@ -115,9 +117,11 @@ For all jobs, it is recommended to configure "General->Discard old builds" to li
 
 - Select "Source Code Management->Git" and set:
     - Repository URL: https://github.com/YOUR-ORG/greeting-ui.git
-    - Credentials: (set up global credential of type SSH - needed to push tags)
+    - Credentials: the git ssh credential you created previously
     - Branch Specifier: */cloud-pipelines-spinnaker
-- Select "Build->Execute shell" and copy the body of the [bootstrap](./bootstrap.sh) script. Update the M2_SETTINGS_REPO_USERNAME and M2_SETTINGS_REPO_ROOT, as appropriate, and set jobScript="prod-tag-release.sh"
+- Select "Build->Execute shell" and copy the body of the [bootstrap](./bootstrap.sh) script
+    - Update the M2_SETTINGS_REPO_USERNAME and M2_SETTINGS_REPO_ROOT, as appropriate
+    - Set jobScript="prod-tag-release.sh"
 - Select "Post-build Actions->Git Publisher. Set:
   - Push Only If Build Succeeds: true (checked)
   - Tags->Tags to push:         ${TAG_PREFIX}${TRIGGER_BUILD_VERSION} # Jenkins hack: hard code TAG_PREFIX as prod/greeting-ui
@@ -139,7 +143,9 @@ For all jobs, it is recommended to configure "General->Discard old builds" to li
 - Select "Source Code Management->Git" and set:
     - Repository URL: https://github.com/YOUR-ORG/fortune-service.git
     - Branch Specifier: */cloud-pipelines-spinnaker
-- Select "Build->Execute shell" and copy the body of the [bootstrap](./bootstrap.sh) script. Update the M2_SETTINGS_REPO_USERNAME and M2_SETTINGS_REPO_ROOT, as appropriate, and set jobScript="stage-e2e.sh"
+- Select "Build->Execute shell" and copy the body of the [bootstrap](./bootstrap.sh) script
+    - Update the M2_SETTINGS_REPO_USERNAME and M2_SETTINGS_REPO_ROOT, as appropriate
+    - Set jobScript="stage-e2e.sh"
 - Select "Post-build Actions->Archive the artifacts" and set:
   Files to archive: ci-build.properties
   
@@ -156,7 +162,9 @@ For all jobs, it is recommended to configure "General->Discard old builds" to li
 - Select "Source Code Management->Git" and set:
     - Repository URL: https://github.com/YOUR-ORG/greeting-ui.git
     - Branch Specifier: */cloud-pipelines-spinnaker
-- Select "Build->Execute shell" and copy the body of the [bootstrap](./bootstrap.sh) script. Update the M2_SETTINGS_REPO_USERNAME and M2_SETTINGS_REPO_ROOT, as appropriate, and set jobScript="stage-e2e.sh"
+- Select "Build->Execute shell" and copy the body of the [bootstrap](./bootstrap.sh) script
+    - Update the M2_SETTINGS_REPO_USERNAME and M2_SETTINGS_REPO_ROOT, as appropriate
+    - Set jobScript="stage-e2e.sh"
 - Select "Post-build Actions->Archive the artifacts" and set:
   Files to archive: ci-build.properties
 
@@ -176,7 +184,9 @@ For all jobs, it is recommended to configure "General->Discard old builds" to li
 - Select "Build->Copy artifacts from another project" and copy the ci-releases.properties file from job `fortune-service-tag-release`
   This will be used to download the desired fortune-service releases for fortune-service test API and DB schema compatibility
   Set the Target directory to ".git/tools-releases/fortune-service"
-- Select "Build->Execute shell" and copy the body of the [bootstrap](./bootstrap.sh) script. Update the M2_SETTINGS_REPO_USERNAME and M2_SETTINGS_REPO_ROOT, as appropriate, and set jobScript="build-and-upload-fortune-service.sh"
+- Select "Build->Execute shell" and copy the body of the [bootstrap](./bootstrap.sh) script
+    - Update the M2_SETTINGS_REPO_USERNAME and M2_SETTINGS_REPO_ROOT, as appropriate
+    - Set jobScript="build-and-upload-fortune-service.sh"
 - Select "Post-build Actions->Archive the artifacts" and set:
   Files to archive: ci-build.properties
   
@@ -195,7 +205,9 @@ For all jobs, it is recommended to configure "General->Discard old builds" to li
 - Select "Build->Copy artifacts from another project" and copy the ci-releases.properties file from job `fortune-service-tag-release` (NOT greeting-ui-tag-release!! Both build-and-upload jobs should be getting the `ci-releases.properties` file from the `fortune-service-tag-release` job)
   This will be used to download the desired fortune-service stubs in order for greeting-ui to test API compatibility
   Set the Target directory to ".git/tools-releases/fortune-service"
-- Select "Build->Execute shell" and copy the body of the [bootstrap](./bootstrap.sh) script. Update the M2_SETTINGS_REPO_USERNAME and M2_SETTINGS_REPO_ROOT, as appropriate, and set jobScript="build-and-upload-greeting-ui.sh"
+- Select "Build->Execute shell" and copy the body of the [bootstrap](./bootstrap.sh) script
+    - Update the M2_SETTINGS_REPO_USERNAME and M2_SETTINGS_REPO_ROOT, as appropriate
+    - Set jobScript="build-and-upload-greeting-ui.sh"
 - Select "Post-build Actions->Archive the artifacts" and set:
   Files to archive: ci-build.properties
 
