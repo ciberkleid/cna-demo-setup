@@ -31,10 +31,10 @@ To run this demo, you will need access to:
 mkdir cna-demo
 cd cna-demo
 
-git clone https://github.com/<your-org>/fortune-service.git
+git clone https://github.com/YOUR-ORG/fortune-service.git
 git checkout cloud-pipelines-spinnaker
 
-git clone https://github.com/<your-org>/greeting-ui.git
+git clone https://github.com/YOUR-ORG/greeting-ui.git
 git checkout cloud-pipelines-spinnaker
 ```
 2. You will also need to set up SSH access from Jenkins. See the "Jenkins Setup" section below for more information.
@@ -63,7 +63,7 @@ git checkout cloud-pipelines-spinnaker
 3. You will also need to create a pipeline for each app in Spinnaker. We will come back to this later in these instructions.
 
 # Pre-requisites Setup: Jenkins
-1. Create a Credentials object of kind `SSH username with private key`. Create an SSH key pair and copy the private key to tje Jenkins credentials object. Add the public SSH key to your GitHub account. This will enable Jenkins to tag releases in the GitHub app repos.
+1. Create a Credentials object of kind `SSH username with private key`. Create an SSH key pair and copy the private key to the Jenkins credentials object. Add the public SSH key to your GitHub account. This will enable Jenkins to tag releases in the GitHub app repos.
 2. Create a Credentials object of kind `secret text` with `value=<your Bintray API key>`. This will enable Jenkins to upload & publish app artifacts to Bintray.
 3. You will also need to create several jobs for each app in Jenkins. We will come back to this later in these instructions.    
 
@@ -74,14 +74,14 @@ You will create a total of six (6) jobs, three for fortune-service, and three fo
 
 To simplify configuration, we are leveraging some of the logic built into the [Cloud Pipelines](https://github.com/cloudpipelines) project. In order to access this code in our Jenkins jobs, each job will download the distribution archive for Cloud Pipelines, which is available on GitHub.
 
-In addition, we are also accessing extensions to the Cloud Pipelines code base in the same way: by downloading a distribution zip from GitHub. The "extensions" code base and distribution archive are part of this repo.
+In addition, we are also accessing extensions to the Cloud Pipelines code base in the same way: by downloading a distribution archive from GitHub. The "extensions" code base and distribution archive are part of this repo.
 
-Hence, the only code you need to copy and past into each Jenkins job is the [bootstrap](./bootstrap.sh) code. Beyond that, there is some simple common configuration for all jobs, and some simple unique configuration per job.
+Hence, the only code you need to copy and paste into each Jenkins job is the [bootstrap](./bootstrap.sh) code. Beyond that, there is some simple common configuration for all jobs, and some simple unique configuration for each job.
 
 For all jobs, it is recommended to configure "General->Discard old builds" to limit the "Max # of builds to keep" to avoid filling up the Jenkins disk.
 
 1. **Fortune Service Job: fortune-service-prod-tag-release**
-- Create a new job (aka "item") of type "freestyle project" and name it `fortune-service-tag-release`
+- Create a new job (aka "item") of type "freestyle project" and name it `fortune-service-prod-tag-release`
 - Select "General->This project is parameterized" and add the following parameters:
 
 | Parameter      | Default Value | Description |
@@ -91,7 +91,7 @@ For all jobs, it is recommended to configure "General->Discard old builds" to li
 | BACK_COMPATIBILITY_DEPTH   |    1     |To be set by Spinnaker |
 
 - Select "Source Code Management->Git" and set:
-    - Repository URL: https://github.com/<your-org>/fortune-service.git
+    - Repository URL: https://github.com/YOUR-ORG/fortune-service.git
     - Credentials: (set up global credential of type SSH - needed to push tags)
     - Branch Specifier: */cloud-pipelines-spinnaker
 - Select "Build->Execute shell" and copy the body of the [bootstrap](./bootstrap.sh) script. Update the M2_SETTINGS_REPO_USERNAME and M2_SETTINGS_REPO_ROOT, as appropriate, and set jobScript="prod-tag-release.sh"
@@ -104,7 +104,7 @@ For all jobs, it is recommended to configure "General->Discard old builds" to li
   - Tags->Target remote name:   origin
   
 2. **Greeting UI Job: greeting-ui-prod-tag-release**
-- Create a new job (aka "item") of type "freestyle project" and name it `greeting-ui-tag-release`
+- Create a new job (aka "item") of type "freestyle project" and name it `greeting-ui-prod-tag-release`
 - Select "General->This project is parameterized" and add the following parameters:
 
 | Parameter      | Default Value | Description |
@@ -114,7 +114,7 @@ For all jobs, it is recommended to configure "General->Discard old builds" to li
 | BACK_COMPATIBILITY_DEPTH   |    1     |To be set by Spinnaker |
 
 - Select "Source Code Management->Git" and set:
-    - Repository URL: https://github.com/<your-org>/greeting-ui.git
+    - Repository URL: https://github.com/YOUR-ORG/greeting-ui.git
     - Credentials: (set up global credential of type SSH - needed to push tags)
     - Branch Specifier: */cloud-pipelines-spinnaker
 - Select "Build->Execute shell" and copy the body of the [bootstrap](./bootstrap.sh) script. Update the M2_SETTINGS_REPO_USERNAME and M2_SETTINGS_REPO_ROOT, as appropriate, and set jobScript="prod-tag-release.sh"
@@ -127,7 +127,7 @@ For all jobs, it is recommended to configure "General->Discard old builds" to li
   - Tags->Target remote name:   origin
 
 3. **Fortune Service Job: fortune-service-stage-e2e**
-- Create a new job (aka "item") of type "freestyle project" and name it `fortune-service-build-and-upload`
+- Create a new job (aka "item") of type "freestyle project" and name it `fortune-service-stage-e2e`
 - Select "General->This project is parameterized" and add the following parameters:
 
 | Parameter      | Default Value | Description |
@@ -137,14 +137,14 @@ For all jobs, it is recommended to configure "General->Discard old builds" to li
 | TRIGGER_COMMIT_ID   |         |To be set by Spinnaker |
 
 - Select "Source Code Management->Git" and set:
-    - Repository URL: https://github.com/<your-org>/fortune-service.git
+    - Repository URL: https://github.com/YOUR-ORG/fortune-service.git
     - Branch Specifier: */cloud-pipelines-spinnaker
 - Select "Build->Execute shell" and copy the body of the [bootstrap](./bootstrap.sh) script. Update the M2_SETTINGS_REPO_USERNAME and M2_SETTINGS_REPO_ROOT, as appropriate, and set jobScript="stage-e2e.sh"
 - Select "Post-build Actions->Archive the artifacts" and set:
   Files to archive: ci-build.properties
   
 4. **Greeting-UI Job: greeting-ui-stage-e2e**
-- Create a new job (aka "item") of type "freestyle project" and name it `greeting-ui-build-and-upload`
+- Create a new job (aka "item") of type "freestyle project" and name it `greeting-ui-build-stage-e2e`
 - Select "General->This project is parameterized" and add the following parameters:
 
 | Parameter      | Default Value | Description |
@@ -154,7 +154,7 @@ For all jobs, it is recommended to configure "General->Discard old builds" to li
 | TRIGGER_COMMIT_ID   |         |To be set by Spinnaker |
 
 - Select "Source Code Management->Git" and set:
-    - Repository URL: https://github.com/<your-org>/greeting-ui.git
+    - Repository URL: https://github.com/YOUR-ORG/greeting-ui.git
     - Branch Specifier: */cloud-pipelines-spinnaker
 - Select "Build->Execute shell" and copy the body of the [bootstrap](./bootstrap.sh) script. Update the M2_SETTINGS_REPO_USERNAME and M2_SETTINGS_REPO_ROOT, as appropriate, and set jobScript="stage-e2e.sh"
 - Select "Post-build Actions->Archive the artifacts" and set:
@@ -170,7 +170,7 @@ For all jobs, it is recommended to configure "General->Discard old builds" to li
 | RELEASE_TAGS   |         |Comma-separated list of tags (e.g. prod/fortune-service/1.0.0+20190421.161538Z.a6eba77). If SKIP_BACK_COMPATIBILITY_CHECKS=false and RELEASE_TAGS="", script will dynamically discover latest releases |
 
 - Select "Source Code Management->Git" and set:
-    - Repository URL: https://github.com/<your-org>/fortune-service.git
+    - Repository URL: https://github.com/YOUR-ORG/fortune-service.git
     - Branch Specifier: */cloud-pipelines-spinnaker
 - Select "Build environment->Use secret text(s) or file(s)" and set variable M2_SETTINGS_REPO_PASSWORD to the bintray api key (see "Common Setup" section above)
 - Select "Build->Copy artifacts from another project" and copy the ci-releases.properties file from job `fortune-service-tag-release`
@@ -189,7 +189,7 @@ For all jobs, it is recommended to configure "General->Discard old builds" to li
 | STUBS      |        |value format: groupid:name:version,groupid2:name2,version2. Sample value: io.pivotal:fortune-service:1-1f7d10d47983699752695c5ddd3274b7620bea35   |
 
 - Select "Source Code Management->Git" and set:
-    - Repository URL: https://github.com/<your-org>/greeting-ui.git
+    - Repository URL: https://github.com/YOUR-ORG/greeting-ui.git
     - Branch Specifier: */cloud-pipelines-spinnaker
 - Select "Build environment->Use secret text(s) or file(s)" and set variable M2_SETTINGS_REPO_PASSWORD to the bintray api key (see "Common Setup" section above)
 - Select "Build->Copy artifacts from another project" and copy the ci-releases.properties file from job `fortune-service-tag-release` (NOT greeting-ui-tag-release!! Both build-and-upload jobs should be getting the `ci-releases.properties` file from the `fortune-service-tag-release` job)
