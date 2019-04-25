@@ -9,8 +9,8 @@
 # Set your Bintray username and maven repo root
 # Set job script to run. Check extensions archive for options/examples.
 
-M2_SETTINGS_REPO_USERNAME=ciberkleid
-M2_SETTINGS_REPO_ROOT=maven-repo
+M2_SETTINGS_REPO_USERNAME="ciberkleid"
+M2_SETTINGS_REPO_ROOT="maven-repo"
 
 jobScript="build-and-upload-fortune-service.sh"
 
@@ -24,4 +24,4 @@ source "${WORKSPACE}"/.git/tools-ext/custom/init-env.sh
 
 echo -e "\n\n########## Run job script ##########"
 echo "Executing script: [${jobScript}]"
-source "${WORKSPACE_EXT}"/${jobScript}
+source "${WORKSPACE_EXT}/${jobScript}"
