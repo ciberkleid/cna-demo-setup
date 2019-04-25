@@ -103,7 +103,9 @@ For all jobs, it is recommended to configure "General->Discard old builds" to li
   - Tags->Tag message:          Production release
   - Tags->Create new tag:       true (checked)
   - Tags->Target remote name:   origin
-  
+- Select "Post-build Actions->Archive the artifacts" and set:
+  Files to archive: ci-build.properties,ci-releases.properties
+    
 2. **Greeting UI Job: greeting-ui-prod-tag-release**
 - Create a new job (aka "item") of type "freestyle project" and name it `greeting-ui-prod-tag-release`
 - Select "General->This project is parameterized" and add the following parameters:
@@ -127,6 +129,8 @@ For all jobs, it is recommended to configure "General->Discard old builds" to li
   - Tags->Tag message:          Production release
   - Tags->Create new tag:       true (checked)
   - Tags->Target remote name:   origin
+- Select "Post-build Actions->Archive the artifacts" and set:
+  Files to archive: ci-build.properties,ci-releases.properties
 
 3. **Fortune Service Job: fortune-service-stage-e2e**
 - Create a new job (aka "item") of type "freestyle project" and name it `fortune-service-stage-e2e`
