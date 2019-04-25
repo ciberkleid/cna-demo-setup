@@ -42,7 +42,7 @@ git checkout cloud-pipelines-spinnaker
 # Pre-requisites Setup: Bintray
 1. Create an account on Bintray (free). 
 2. Bintray requires that a package exist before any application artifacts can be uploaded. Log into the Bintray UI and create the packages for fortune-service and greeting-ui using the option “Import from GitHub.” Refer to these [screenshots](https://cloud.spring.io/spring-cloud-pipelines/single/spring-cloud-pipelines.html#_1_3_create_the_bintray_maven_repository_package) for guidance.
-3. Take note of your `<username>/<repo-root>` (`ciberkleid/maven-repo` in the sample screenshot), as you will need this when you set up your Jenkins jobs
+3. Take note of your `<username>/<repo-root>` (`ciberkleid/maven-repo` in the sample screenshot), as you will need this when you set up your Jenkins jobs.
 4. Take note of your Bintray API key. You will also need this during your Jenkins setup.
 
 # Pre-requisites Setup: Cloud Foundry
@@ -58,7 +58,7 @@ git checkout cloud-pipelines-spinnaker
 # Pre-requisites Setup: Spinnaker
 1. Configure Jenkins as a target account within Spinnaker.
     - This is needed so that Spinnaker can create a pipeline trigger based on the build job, and so that it can trigger the stage tests and release tagging jobs
-2. Configure Jenkins as a target account within Spinnaker.
+2. Configure Cloud Foundry as a target account within Spinnaker.
     - This is needed so that Spinnaker can deploy the applications to Cloud Foundry
 3. You will also need to create a pipeline for each app in Spinnaker. We will come back to this later in these instructions.
 
