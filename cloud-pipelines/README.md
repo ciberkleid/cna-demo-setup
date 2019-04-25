@@ -11,7 +11,7 @@ Why?
 
 Best of Both Worlds
 
-In this demo we use the key benefits of Cloud Pipelines and shift them as far left in the CI cycle as possible. For example, the API compatibility and DB schema compatibility tests are shifted left of the build-and-deploy step, such that no artifact will be uploaded to the artifact repository if it hasn't passed all of those tests. In addition, we enhance the back-compatibility testing to test against N number of most recent prod versions, rather than just the latest prod version.
+In this demo we use the key benefits of Cloud Pipelines and shift them as far left in the CI cofycle as possible. For example, the API compatibility and DB schema compatibility tests are shifted left in the CI workflow, such that no artifact will be uploaded to the artifact repository if it has not passed all of these tests. In addition, we enhance the back-compatibility testing to test against N number of most recent prod versions, rather than just the latest prod version.
 
 We also take advantage of the integration of Spinnaker with Cloud Foundry, which makes it very easy to orchestrate sophisticated deployments without writing or maintaining any deployment scripts. For the Spinnaker pipelines, we propose a pattern using `Configure->Evaluate Variables->Assign Variables` stages at the beginning of the pipeline to make it easier to assess and maintain the pipeline configuration.
 
