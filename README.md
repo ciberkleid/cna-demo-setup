@@ -1,7 +1,7 @@
 # cna-demo
 Easy to set up cloud-native architecture demo for PCF. Consists of two apps, greeting-ui and fortune-service, and a database used by fortune-service. Can be used to demo all three services in Spring Cloud Services, container to container networking, and distributed tracing in PCF Metrics.
 
-This section explains how to manually deploy this demo app to Pivotal Cloud Foundry. (For instructions on how to set up a CI/CD pipeline for automated deployment of the applications, please see the [cloud-pipelines README](cloud-pipelines/README.md).)
+This section explains how to manually deploy this demo to Pivotal Cloud Foundry. (For instructions on how to set up a CI/CD pipeline for automated deployment of the demo, please see the [cloud-pipelines README](cloud-pipelines/README.md).)
 
 This demo comprises four repos:
 * https://github.com/ciberkleid/cna-demo-setup.git - Set up instructions and deployment scripts
