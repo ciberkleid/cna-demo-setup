@@ -97,10 +97,9 @@ For all jobs, it is recommended to configure "General->Discard old builds" to li
 - Select "Build->Execute shell" and copy the body of the [bootstrap](./bootstrap.sh) script
     - Update the M2_SETTINGS_REPO_USERNAME and M2_SETTINGS_REPO_ROOT, as appropriate
     - Set jobScript="prod-tag-release.sh"
-- Select "Post-build Actions->Git Publisher. Set:
+- Select "Post-build Actions->Git Publisher. Configure as follows:
   - Push Only If Build Succeeds: true (checked)
-  - Tags->Tags to push:         ${TAG_PREFIX}${TRIGGER_BUILD_VERSION} # Jenkins hack: hard code TAG_PREFIX as prod/greeting-ui
-  -                                                                   # or use env inj plugin to make env var available post-build
+  - Tags->Tags to push:         prod/fortune-service/${TRIGGER_BUILD_VERSION}
   - Tags->Tag message:          Production release
   - Tags->Create new tag:       true (checked)
   - Tags->Target remote name:   origin
@@ -122,10 +121,9 @@ For all jobs, it is recommended to configure "General->Discard old builds" to li
 - Select "Build->Execute shell" and copy the body of the [bootstrap](./bootstrap.sh) script
     - Update the M2_SETTINGS_REPO_USERNAME and M2_SETTINGS_REPO_ROOT, as appropriate
     - Set jobScript="prod-tag-release.sh"
-- Select "Post-build Actions->Git Publisher. Set:
+- Select "Post-build Actions->Git Publisher. Configure as follows:
   - Push Only If Build Succeeds: true (checked)
-  - Tags->Tags to push:         ${TAG_PREFIX}${TRIGGER_BUILD_VERSION} # Jenkins hack: hard code TAG_PREFIX as prod/greeting-ui
-  -                                                                   # or use env inj plugin to make env var available post-build
+  - Tags->Tags to push:         prod/greeting-ui/${TRIGGER_BUILD_VERSION}
   - Tags->Tag message:          Production release
   - Tags->Create new tag:       true (checked)
   - Tags->Target remote name:   origin
