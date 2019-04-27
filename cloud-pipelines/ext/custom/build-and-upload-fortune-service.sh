@@ -65,7 +65,7 @@ else
     releaseTagsArray=($RELEASE_TAGS)
     for ((i=0; i<${#releaseTagsArray[@]}; ++i)); do
         tag="${releaseTagsArray[$i]}"
-        git checkout ${tag}
+        ${GIT_BIN}checkout ${tag}
         # version=${releaseTagsArray[$i]#"prod/${PROJECT_NAME}/"}
         echo -e "\n\n##### Testing [${tag}] against current DB schema [git_commit=${GIT_COMMIT}]\n\n\n";
         rm -r src/main/resources/db/migration
@@ -73,13 +73,13 @@ else
         cp -r .git/db-${GIT_COMMIT}/migration src/main/resources/db/migration
         runDefaultTests
     done
-    git reset --hard "${GIT_COMMIT}"
-    git clean -f -d
+    ${GIT_BIN}reset --hard "${GIT_COMMIT}"
+    ${GIT_BIN}clean -f -d
     unset IFS
 fi
 
 echo -e "\n\n########## Build and upload ##########"
-git checkout "${GIT_COMMIT}"
+${GIT_BIN}checkout "${GIT_COMMIT}"
 build
 
 echo -e "\n\n########## Publish uploaded files ##########"

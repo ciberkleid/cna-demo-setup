@@ -5,7 +5,7 @@ set -o errexit
 echo -e "\n\n########## Check out commit ##########"
 echo "Trigger build version [${TRIGGER_BUILD_VERSION}]"
 echo "Checking out commit [${TRIGGER_COMMIT_ID}]"
-git checkout ${TRIGGER_COMMIT_ID}
+${GIT_BIN} checkout ${TRIGGER_COMMIT_ID}
 
 echo -e "\n\n########## Run e2e tests ##########"
 runE2eTests
