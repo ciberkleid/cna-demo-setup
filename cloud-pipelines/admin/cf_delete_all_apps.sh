@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 cf target -o cloud-pipelines-org
 echo ""
 echo "Will delete all apps in all spaces in this org!!"

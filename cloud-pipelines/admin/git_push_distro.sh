@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 pushd ~/workspace/spinnaker-cloud-pipelines-home/cna-demo-setup
 mkdir -p cloud-pipelines/dist
 git archive -o cloud-pipelines/dist/cloud-pipelines-ext.tar.gz HEAD:cloud-pipelines/ext

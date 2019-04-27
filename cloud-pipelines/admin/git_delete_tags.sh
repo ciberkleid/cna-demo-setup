@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 echo "Deleting tags for fortune-service"
 pushd ~/workspace/spinnaker-cloud-pipelines-home/fortune-service
 #Fetch remote tags.

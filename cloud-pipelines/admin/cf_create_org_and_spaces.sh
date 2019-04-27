@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 cf target
 echo ""
 echo "Will create org and spaces for pipelines setup"

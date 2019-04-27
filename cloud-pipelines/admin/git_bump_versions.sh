@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 echo "Bumping commit for fortune-service"
 pushd ~/workspace/spinnaker-cloud-pipelines-home/fortune-service
 echo " " >> src/test/resources/commit-bumper
