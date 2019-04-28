@@ -35,7 +35,7 @@ cat ci-build.properties
 
 echo -e "\n\n########## Tag Release ##########"
 echo "Applying tag [${TAG_PREFIX}${TRIGGER_BUILD_VERSION}] to commit [${TRIGGER_COMMIT_ID}]"
-${GIT_BIN} checkout ${TRIGGER_COMMIT_ID}
+"${GIT_BIN}" checkout ${TRIGGER_COMMIT_ID}
 # Tagging will happen through post-build action
 
 # Jenkins hack:
