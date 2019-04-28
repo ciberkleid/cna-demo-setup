@@ -17,7 +17,7 @@ fi
 
 export ENVIRONMENT=BUILD
 export CI=Jenkins
-export BUILD_OPTIONS="-Dstubrunner.snapshot-check-skip=true -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
+export BUILD_OPTIONS="-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
 
 
 source "${WORKSPACE}"/.git/tools/src/main/bash/pipeline.sh
@@ -55,6 +55,6 @@ echo "PROJECT_GROUP=[${PROJECT_GROUP}]"
 echo "PROJECT_NAME=[${PROJECT_NAME}]"
 echo "PROJECT_VERSION=[${PROJECT_VERSION}]"
 export REPO_WITH_BINARIES_FOR_UPLOAD="${REPO_WITH_BINARIES_FOR_UPLOAD}/${PROJECT_NAME}"
-#export STUBRUNNER_SNAPSHOT_CHECK_SKIP=true
+export STUBRUNNER_SNAPSHOT_CHECK_SKIP=true
 
 echo -e "\n\n########## ---------- Cloud Pipelines and Extensions Environment Setup [END] ---------- ##########"

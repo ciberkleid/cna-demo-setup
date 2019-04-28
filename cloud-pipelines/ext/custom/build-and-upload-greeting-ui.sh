@@ -30,14 +30,16 @@ fi
 
 echo -e "\n\n########## Test stubs ##########"
 # Need to test one at a time for now due to a port binding error
+savedStubs="${STUBS}"
 IFS=","
 stubrunnerIDsArray=($STUBS)
 length=${#stubrunnerIDsArray[@]}
-savedBuildOptions="${BUILD_OPTIONS}"
+#savedBuildOptions="${BUILD_OPTIONS}"
 
 for ((i=0; i<${#stubrunnerIDsArray[@]}; ++i)); do
     echo -e "\n\n##### Testing with stubs[$i]: ${stubrunnerIDsArray[$i]}\n";
-    BUILD_OPTIONS="${savedBuildOptions} -Dstubrunner.ids=${stubrunnerIDsArray[$i]}"
+    STUBS="${stubrunnerIDsArray[$i]}"
+    #export BUILD_OPTIONS="${savedBuildOptions} -Dstubrunner.ids=${stubrunnerIDsArray[$i]}"
     if [[ $i<${#stubrunnerIDsArray[@]}-1 ]]; then
         runDefaultTests
     else
@@ -47,7 +49,8 @@ for ((i=0; i<${#stubrunnerIDsArray[@]}; ++i)); do
     fi
 done
 
-BUILD_OPTIONS="${savedBuildOptions}"
+#BUILD_OPTIONS="${savedBuildOptions}"
+STUBS="${savedStubs}"
 unset IFS
 
 echo -e "\n\n########## Publish uploaded files ##########"
