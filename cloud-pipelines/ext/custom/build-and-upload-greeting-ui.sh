@@ -37,7 +37,7 @@ savedBuildOptions="${BUILD_OPTIONS}"
 
 for ((i=0; i<${#stubrunnerIDsArray[@]}; ++i)); do
     echo -e "\n\n##### Testing with stubs[$i]: ${stubrunnerIDsArray[$i]}\n";
-    export BUILD_OPTIONS="${savedBuildOptions} -Dstubrunner.ids=${stubrunnerIDsArray[$i]}"
+    BUILD_OPTIONS="${savedBuildOptions} -Dstubrunner.ids=${stubrunnerIDsArray[$i]}"
     if [[ $i<${#stubrunnerIDsArray[@]}-1 ]]; then
         runDefaultTests
     else
