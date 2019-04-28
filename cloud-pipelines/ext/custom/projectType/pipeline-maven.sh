@@ -17,10 +17,10 @@ function runDefaultTests() {
 
 	if [[ "${CI}" == "CONCOURSE" ]]; then
 		# shellcheck disable=SC2086
-		"${MAVENW_BIN}" clean test -Pdefault ${BUILD_OPTIONS} || (printTestResults && return 1)
+		"${MAVENW_BIN}" clean test -Pdefault -Drepo.with.binaries="${REPO_WITH_BINARIES}" ${BUILD_OPTIONS} || (printTestResults && return 1)
 	else
 		# shellcheck disable=SC2086
-		"${MAVENW_BIN}" clean test -Pdefault ${BUILD_OPTIONS}
+		"${MAVENW_BIN}" clean test -Pdefault -Drepo.with.binaries="${REPO_WITH_BINARIES}" ${BUILD_OPTIONS}
 	fi
 } # }}}
 

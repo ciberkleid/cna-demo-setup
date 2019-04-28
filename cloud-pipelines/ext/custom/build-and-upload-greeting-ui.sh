@@ -2,8 +2,6 @@
 
 set -o errexit
 
-export STUBS
-
 echo -e "\n\n########## Generate version for this build ##########"
 export PASSED_PIPELINE_VERSION=$(generateVersion)
 echo "Project Name [${PROJECT_NAME}]"
@@ -32,33 +30,25 @@ fi
 
 echo -e "\n\n########## Test stubs ##########"
 # Need to test one at a time for now due to a port binding error
-savedStubs=${STUBS}
 IFS=","
 stubrunnerIDsArray=($STUBS)
 length=${#stubrunnerIDsArray[@]}
+savedBuildOptions="${BUILD_OPTIONS}"
 
-# The build uses a stub, so if the array contains only one stub, skip to build
-if [[ "$length" -eq 1 ]]; then
-	echo "Exactly one stub provided. Skipping to build (build will test against this stub)."
-else
-    echo -e "\nFirst stub (stubs[0]) will be tested during the build."
-    echo -e "Starting tests with second stub (stubs[1]).\n"
-fi
-# Start with index=1 (index=0 will be tested during the build)
-for ((i=1; i<${#stubrunnerIDsArray[@]}; ++i)); do
-	STUBS="${stubrunnerIDsArray[$i]}"
-    echo -e "\n\n##### Testing with stubs[$i]: ${STUBS}\n";
-    runDefaultTests
+for ((i=0; i<${#stubrunnerIDsArray[@]}; ++i)); do
+    echo -e "\n\n##### Testing with stubs[$i]: ${stubrunnerIDsArray[$i]}\n";
+    BUILD_OPTIONS="${savedBuildOptions} -Dstubrunner.ids=${stubrunnerIDsArray[$i]}"
+    if [[ $i<${#stubrunnerIDsArray[@]}-1 ]]; then
+        runDefaultTests
+    else
+        echo -e "\n\n########## Build and upload ##########"
+        echo -e "\nBuild will test with stubs[$i]: ${stubrunnerIDsArray[$i]}\n";
+        build
+    fi
 done
+
+BUILD_OPTIONS="${savedBuildOptions}"
 unset IFS
-
-echo -e "\n\n########## Build and upload ##########"
-STUBS="${stubrunnerIDsArray[0]}"
-echo -e "\nBuild will test with stubs[0]: ${STUBS}";
-build
-
-# Re-set STUBS workaround to binding error
-STUBS=${savedStubs}
 
 echo -e "\n\n########## Publish uploaded files ##########"
 api=${REPO_WITH_BINARIES_FOR_UPLOAD/maven/content}
