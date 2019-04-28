@@ -1,59 +1,55 @@
-STUBS="${1}"
-STUB_DEFAULT="io.pivotal:fortune-service:1.0.0"
-PROJECT_NAME="greeting-ui"
-M2_SETTINGS_REPO_USERNAME="ciberkleid"
-#M2_SETTINGS_REPO_PASSWORD=""
-M2_SETTINGS_REPO_ROOT="maven-repo"
-REPO_WITH_BINARIES=https://${M2_SETTINGS_REPO_USERNAME}:${M2_SETTINGS_REPO_PASSWORD}@dl.bintray.com/${M2_SETTINGS_REPO_USERNAME}/${M2_SETTINGS_REPO_ROOT}
-BUILD_OPTIONS=-Dstubrunner.snapshot-check-skip=true
-export STUBS
-export REPO_WITH_BINARIES
+#!/usr/bin/env bash
 
-pushd ~/workspace/spinnaker-cloud-pipelines-home/${PROJECT_NAME}
+# Get input
+STUBS="${1}"
+WORK_OFFLINE="${2:-true}"
+
+# Set env
+PROJECT_NAME=greeting-ui
+PROJECT_HOME="${GREETING_UI_HOME}"
+if [[ -z "${PROJECT_HOME}" ]]; then
+    PROJECT_HOME="~/workspace/spinnaker-cloud-pipelines-home/${PROJECT_NAME}"
+fi
+M2_SETTINGS_REPO_USERNAME="${M2_SETTINGS_REPO_USERNAME:-ciberkleid}"
+M2_SETTINGS_REPO_PASSWORD="${M2_SETTINGS_REPO_PASSWORD:-OOPS_WRONG_PASSWORD}"
+M2_SETTINGS_REPO_ROOT="${M2_SETTINGS_REPO_ROOT:-maven-repo}"
+REPO_WITH_BINARIES=https://${M2_SETTINGS_REPO_USERNAME}:${M2_SETTINGS_REPO_PASSWORD}@dl.bintray.com/${M2_SETTINGS_REPO_USERNAME}/${M2_SETTINGS_REPO_ROOT}
+BUILD_OPTIONS="${BUILD_OPTIONS} -Dstubrunner.snapshot-check-skip=true"
+
+if [[ $WORK_OFFLINE ]]; then
+    BUILD_OPTIONS="${BUILD_OPTIONS} -Dstubrunner.stubs-mode=LOCAL"
+fi
+
+# Confirm settings
+echo -e "\nRunning script with the following parameters:\n"
+echo "PROJECT_NAME=${PROJECT_NAME}"
+echo "PROJECT_HOME=${PROJECT_HOME}"
+echo "WORK_OFFLINE=${WORK_OFFLINE}"
+
+pushd "${PROJECT_HOME}"
 
 # Check against provided stubs
-echo -e "\n\n########## Test stubs ##########"
 # Need to test one at a time for now due to a port binding error
-savedStubs=${STUBS}
 IFS=","
 stubrunnerIDsArray=($STUBS)
 length=${#stubrunnerIDsArray[@]}
+savedBuildOptions="${BUILD_OPTIONS}"
 
-# The build uses a stub, so if the array contains only one stub, skip to build
-if [[ "$length" -eq 0 ]]; then
-	echo -e "\nNo stub provided."
-	echo "Build will test in offline mode with default stub: [${STUB_DEFAULT}]"
-	STUBS=${STUB_DEFAULT}
-	REPO_WITH_BINARIES=""
-    BUILD_OPTIONS="${BUILD_OPTIONS} -Dstubrunner.stubs-mode=LOCAL"
-	echo "Comment out the stubs-mode setting in your code. Continue? [y/n]:"
-	read continue
-	if [[ ${continue} != "y" ]]; then
-		echo "\nAborting based on user input"
-		exit 1
-	fi
-elif [[ "$length" -eq 1 ]]; then
-	echo "Exactly one stub provided. Skipping to build (build will test against this stub)."
-else
-    echo -e "\nFirst stub (stubs[0]) will be tested during the build."
-    echo -e "Starting tests with second stub (stubs[1]).\n"
-fi
-# Start with index=1 (index=0 will be tested during the build)
-for ((i=1; i<${#stubrunnerIDsArray[@]}; ++i)); do
-	STUBS="${stubrunnerIDsArray[$i]}"
-    echo -e "\n\n##### Testing with stubs[$i]: ${STUBS}\n";
-    #runDefaultTests
-    ./mvnw clean test -Pdefault ${BUILD_OPTIONS}
+for ((i=0; i<${#stubrunnerIDsArray[@]}; ++i)); do
+    echo -e "\n\n##### Testing with stubs[$i]: ${stubrunnerIDsArray[$i]}\n";
+    BUILD_OPTIONS="${savedBuildOptions} -Dstubrunner.ids=${stubrunnerIDsArray[$i]}"
+    if [[ $i<${#stubrunnerIDsArray[@]}-1 ]]; then
+        ./mvnw clean test -Pdefault -Drepo.with.binaries="${REPO_WITH_BINARIES}" ${BUILD_OPTIONS}
+    else
+        echo -e "\nThis stub will be used for the build...\n";
+        # Call build after for loop, in case no stub was provided at all
+    fi
 done
+
+ echo -e "\n\n########## Build and upload ##########"
+ ./mvnw clean install ${BUILD_OPTIONS}
+
+BUILD_OPTIONS="${savedBuildOptions}"
 unset IFS
-
-echo -e "\n\n########## Build and upload ##########"
-if [[ "$length" -ne 0 ]]; then
-	STUBS="${stubrunnerIDsArray[0]}"
-	echo -e "\nBuild will test with stubs[0]: ${STUBS}";
-fi
-
-#build
-./mvnw clean install ${BUILD_OPTIONS}
 
 popd
