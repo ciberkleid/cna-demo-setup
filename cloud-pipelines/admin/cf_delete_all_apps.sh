@@ -6,6 +6,7 @@ echo "Continue? [y/n]"
 read continue
 if [[ $continue == "y" ]]; then
 	cf do-all --org delete {} -f
+	cf do-all --org delete-orphaned-routes -f
 else
 	echo "aborting..."
 fi
