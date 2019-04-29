@@ -40,7 +40,7 @@ for ((i=0; i<${#stubrunnerIDsArray[@]}; ++i)); do
     echo -e "\n\n##### Testing with stubs[$i]: ${stubrunnerIDsArray[$i]}\n";
     STUBS="${stubrunnerIDsArray[$i]}"
     #export BUILD_OPTIONS="${savedBuildOptions} -Dstubrunner.ids=${stubrunnerIDsArray[$i]}"
-    if [[ $i<${#stubrunnerIDsArray[@]}-1 ]]; then
+    if (( $i < ${#stubrunnerIDsArray[@]}-1 )); then
         runDefaultTests
     else
         echo -e "\n\n########## Build and upload ##########"
