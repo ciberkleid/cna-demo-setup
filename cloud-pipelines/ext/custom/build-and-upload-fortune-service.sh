@@ -58,7 +58,7 @@ else
     # instead, will use flyway.locations=filesystem:.git/db-${current_git_commit}/db/migration
     mkdir -p .git/db-${GIT_COMMIT}
     cp -r src/main/resources/db/migration .git/db-${GIT_COMMIT}/migration
-    #BUILD_OPTIONS="-Dspring.flyway.locations=filesystem:.git/db-${GIT_COMMIT}/migration ${BUILD_OPTIONS}"
+    BUILD_OPTIONS="-Dspring.flyway.locations=filesystem:.git/db-${GIT_COMMIT}/migration ${BUILD_OPTIONS}"
 
     # Loop through previous release and check each one against the current db schema
     IFS=","
@@ -67,10 +67,11 @@ else
         tag="${releaseTagsArray[$i]}"
         "${GIT_BIN}" checkout ${tag}
         # version=${releaseTagsArray[$i]#"prod/${PROJECT_NAME}/"}
-        echo -e "\n\n##### Testing [${tag}] against current DB schema [git_commit=${GIT_COMMIT}]\n\n\n";
-        rm -r src/main/resources/db/migration
-        mkdir -p src/main/resources/db
-        cp -r .git/db-${GIT_COMMIT}/migration src/main/resources/db/migration
+        echo -e "\n\n##### Testing [${tag}] against current DB schema [current git_commit=${GIT_COMMIT}]\n\n\n";
+        #rm -r src/main/resources/db/migration
+        #mkdir -p src/main/resources/db
+        #cp -r .git/db-${GIT_COMMIT}/migration src/main/resources/db/migration
+        # runDefaultTests will use BUILD_OPTIONS to use new migration scripts (saved to .git folder above)
         runDefaultTests
     done
     "${GIT_BIN}" reset --hard "${GIT_COMMIT}"
