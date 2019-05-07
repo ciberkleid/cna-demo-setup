@@ -101,6 +101,7 @@ For all jobs, it is recommended to configure "General->Discard old builds" to li
   - Push Only If Build Succeeds: true (checked)
   - Tags->Tags to push:         prod/fortune-service/${TRIGGER_BUILD_VERSION}
   - Tags->Tag message:          Production release
+  - Tags->Create new tag:       true (checked)
   - Tags->Target remote name:   origin
 - Select "Post-build Actions->Archive the artifacts" and set:
   Files to archive: ci-build.properties,ci-releases.properties
@@ -126,6 +127,7 @@ For all jobs, it is recommended to configure "General->Discard old builds" to li
   - Push Only If Build Succeeds: true (checked)
   - Tags->Tags to push:         prod/greeting-ui/${TRIGGER_BUILD_VERSION}
   - Tags->Tag message:          Production release
+  - Tags->Create new tag:       true (checked)
   - Tags->Target remote name:   origin
 - Select "Post-build Actions->Archive the artifacts" and set:
   Files to archive: ci-build.properties,ci-releases.properties
