@@ -58,7 +58,7 @@ else
     # instead, will use flyway.locations=filesystem:.git/db-${current_git_commit}/db/migration
     mkdir -p .git/db-${GIT_COMMIT}
     cp -r src/main/resources/db/migration .git/db-${GIT_COMMIT}/migration
-    BUILD_OPTIONS="-Dspring.flyway.locations=filesystem:.git/db-${GIT_COMMIT}/migration ${BUILD_OPTIONS}"
+    BUILD_OPTIONS="${BUILD_OPTIONS} -Dspring.flyway.locations=filesystem:.git/db-${GIT_COMMIT}/migration"
 
     # Loop through previous release and check each one against the current db schema
     IFS=","
