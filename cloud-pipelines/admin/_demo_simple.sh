@@ -22,9 +22,10 @@ echo "3 - Test fortune-service-build-2          (breaking api change)"
 echo "4 - Build fortune-service-build-3         (back-compatible api change)"
 echo "5 - Test fortune-service-build-4          (breaking db change)"
 echo "6 - Build fortune-service-build-5         (back-compatible db change)"
-echo "7 - Build greeting-ui-build-1             (test with stub for fortune-service-build-1)"
-echo "8 - Build greeting-ui-build-2             (test with stubs for fortune-service-build-1, fortune-service-build-3 and fortune-service-build-5)"
-echo "9 - Exit"
+echo "7 - Build greeting-ui-build-1             (working baseline, test with stub for fortune-service-build-1)"
+echo "8 - Build greeting-ui-build-2             (breaking api change, test with stubs for fortune-service-build-1, fortune-service-build-3 and fortune-service-build-5)"
+echo "9 - Build greeting-ui-build-3             (back-compatible api change, test with stubs for fortune-service-build-1, fortune-service-build-3 and fortune-service-build-5)"
+echo "q - Quit"
 read choice
 
 case ${choice} in
@@ -41,6 +42,7 @@ case ${choice} in
 
         git clone https://github.com/ciberkleid/greeting-ui.git greeting-ui-build-1
         cp -r greeting-ui-build-1 greeting-ui-build-2
+        cp -r greeting-ui-build-1 greeting-ui-build-3
 
         cd fortune-service-build-1
         git checkout ${FORTUNE_SERVICE_1} || { echo >&2 "git checkout failed with $?"; return 1; }
@@ -65,11 +67,15 @@ case ${choice} in
 
         cd greeting-ui-build-1
         git checkout ${GREETING_UI_1} || { echo >&2 "git checkout failed with $?"; return 1; }
-        ./mvnw versions:set -DnewVersion="greeting-ui-build-1" -DprocessAllModules --quiet
+        ./mvnw versions:set -DnewVersion="build-1" -DprocessAllModules --quiet
         cd ..
         cd greeting-ui-build-2
         git checkout ${GREETING_UI_2} || { echo >&2 "git checkout failed with $?"; return 1; }
-        ./mvnw versions:set -DnewVersion="greeting-ui-build-2" -DprocessAllModules --quiet
+        ./mvnw versions:set -DnewVersion="build-2" -DprocessAllModules --quiet
+        cd ..
+        cd greeting-ui-build-3
+        git checkout ${GREETING_UI_3} || { echo >&2 "git checkout failed with $?"; return 1; }
+        ./mvnw versions:set -DnewVersion="build-3" -DprocessAllModules --quiet
         cd ..
         ;;
     2) echo -e "\nBuilding fortune-service-build-1 (baseline)"
@@ -87,7 +93,7 @@ case ${choice} in
         echo -e "\nTest fortune-service-build-2. Expecting success."
         ./mvnw clean test
         echo -e "\nCheck API back compatibility against fortune-service-build-1. Expecting failure due to known back compatibility issues."
-        ./mvnw clean verify -Papicompatibility -Dlatest.production.version=build-1 -Dcontracts.mode=LOCAL
+        ./mvnw clean verify -Papicompatibility -Dlatest.production.version=build-1 -Dcontracts.mode=LOCAL || { echo >&2 "API compatability test failed with $?"; return 0; }
         echo -e "\nFinished testing fortune-service-build-2"
         cd ..
         ;;
@@ -108,7 +114,7 @@ case ${choice} in
         ./mvnw clean test
         echo -e "\nCheck DB back compatibility against fortune-service-build-3. Expecting failure due to known back compatibility issues."
         cd ../fortune-service-build-3
-        ./mvnw clean test -Dspring.flyway.locations=filesystem:../fortune-service-build-4/src/main/resources/db/migration
+        ./mvnw clean test -Dspring.flyway.locations=filesystem:../fortune-service-build-4/src/main/resources/db/migration || { echo >&2 "DB compatability test failed with $?"; return 0; }
         cd ..
         echo -e "\nFinished testing fortune-service-build-4"
         cd ..
@@ -137,7 +143,7 @@ case ${choice} in
         ;;
     7) echo -e "\Building greeting-ui-build-1"
         cd greeting-ui-build-1
-        echo -e "\Building greeting-ui-build-1. Testing against fortune-service-build-1 stub. Expected success"
+        echo -e "\Building greeting-ui-build-1. Testing against fortune-service-build-1 stub. Expecting success"
         export STUBS=io.pivotal:fortune-service:build-1; ./mvnw clean test -Dstubrunner.stubs-mode=LOCAL
         echo -e "\nFinished building greeting-ui-build-1"
         ls ~/.m2/repository/io/pivotal/greeting-ui/greeting-ui-build-1
@@ -145,8 +151,21 @@ case ${choice} in
         ;;
     8) echo -e "\Building greeting-ui-build-2"
         cd greeting-ui-build-2
-        echo -e "\Building greeting-ui-build-2. Testing against fortune-service-build-1, fortune-service-build-3 and fortune-service-build-5 stubs. Expected success"
-        export STUBS=io.pivotal:fortune-service:build-1,io.pivotal:fortune-service:build-3,io.pivotal:fortune-service:build-5; ./mvnw clean test -Dstubrunner.stubs-mode=LOCAL
+        echo -e "\Building greeting-ui-build-2. Testing against fortune-service-build-3 stub. Expecting success"
+        export STUBS=io.pivotal:fortune-service:build-3; ./mvnw clean test -Dstubrunner.stubs-mode=LOCAL
+        #export STUBS=io.pivotal:fortune-service:build-5; ./mvnw clean test -Dstubrunner.stubs-mode=LOCAL
+        echo -e "\Building greeting-ui-build-2. Testing against fortune-service-build-1 stub. Expecting failure"
+        export STUBS=io.pivotal:fortune-service:build-1; ./mvnw clean test -Dstubrunner.stubs-mode=LOCAL || { echo >&2 "API compatability test failed with $?"; return 0; }
+        echo -e "\nFinished building greeting-ui-build-2"
+        ls ~/.m2/repository/io/pivotal/greeting-ui/greeting-ui-build-2
+        cd ..
+        ;;
+    9) echo -e "\Building greeting-ui-build-3"
+        cd greeting-ui-build-3
+        echo -e "\Building greeting-ui-build-3. Testing against fortune-service-build-1, fortune-service-build-3 and fortune-service-build-5 stubs. Expecting success"
+        export STUBS=io.pivotal:fortune-service:build-1; ./mvnw clean test -Dstubrunner.stubs-mode=LOCAL
+        export STUBS=io.pivotal:fortune-service:build-3; ./mvnw clean test -Dstubrunner.stubs-mode=LOCAL
+        export STUBS=io.pivotal:fortune-service:build-5; ./mvnw clean test -Dstubrunner.stubs-mode=LOCAL
         echo -e "\nFinished building greeting-ui-build-2"
         ls ~/.m2/repository/io/pivotal/greeting-ui/greeting-ui-build-2
         cd ..
