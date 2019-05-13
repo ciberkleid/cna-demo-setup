@@ -14,15 +14,15 @@ export FORTUNE_SERVICE_3=9cc2b7470abb7bd1f6779278ea49fb5c97703eb6
 # Breaking DB schema change
 export FORTUNE_SERVICE_4=eb885ffbf81369f46ea726476314eeb803c72749
 # Back-compatible DB schema change
-export FORTUNE_SERVICE_5=a654189fd5e53f14adbe86193dbee393b1f846fd
+export FORTUNE_SERVICE_5=09dd72dd6bb7a4a117ea6cb93d6743e3cc4bd842
 
 ########## greeting-ui commits ##########
 # Baseline
 export GREETING_UI_1=bcd72b4df684817499d2238ca0a3085f16d685ee
 # Breaking API change
-export GREETING_UI_2=5583284a0fa67218ba1d9a46c186b903eb98cafc
+export GREETING_UI_2=6b7333190aa44afaaaaa3f4d184d9f9016993701
 # Back-compatible API change
-export GREETING_UI_3=
+export GREETING_UI_3=0638ccda30d9320b573d6ee0c63cb609b987a1c5
 
 
 ########## demo functions ##########

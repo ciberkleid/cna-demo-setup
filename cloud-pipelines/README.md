@@ -1,31 +1,56 @@
 # cna-demo: CI/CD pipeline
 This section explains how to set up a CI/CD pipeline for automated deployment of this demo application. (For instructions on how to manually deploy this demo to Pivotal Cloud Foundry, please see the [parent README](../README.md).)
- 
-The pipeline in this setup is intended as a reference pipeline that accomplishes two main objectives:
-1. Leverage the key ideas and benefits of the [Cloud Pipelines](https://github.com/cloudpipelines) project to establish baseline best practices and harden the CI portion of the pipeline
-2. Leverage the integration of Spinnaker with Cloud Foundry to simplify the CD portion of the pipeline
 
-Why?
-1. The [Cloud Pipelines](https://github.com/cloudpipelines) project posits great ideas such as contract-based API testing, database versioning, and back-compatibility testing for both for APIs and database schemas. It provides an implementation of these techniques that supports Java (maven and gradle), node, dotnet, and php. It is also easy to customize and extend, and hence serves as a great model for building out your own pipeline scripts.
-2. Spinnaker and Cloud Foundry together provide high-level abstractions and automation for orchestrating application deployment, thereby alleviating much of the complexity and heavy lifting that pipelines often do.
+## Introduction
+###What
 
-Best of Both Worlds
+The pipeline in this setup is intended as a reference pipeline that accomplishes the following main objectives:
+1. Create a clear distinction between Continuous Integration (CI) and Continuous Delivery (CD)
+2. Enable development teams to achieve independent release and rollback cycles of their applications
+3. Enable release engineering teams to establish sophisticated deployment pipelines with minimum effort and complexity
 
-In this demo we use the key benefits of Cloud Pipelines and shift them as far left in the CI cofycle as possible. For example, the API compatibility and DB schema compatibility tests are shifted left in the CI workflow, such that no artifact will be uploaded to the artifact repository if it has not passed all of these tests. In addition, we enhance the back-compatibility testing to test against N number of most recent prod versions, rather than just the latest prod version.
+###Why
 
-We also take advantage of the integration of Spinnaker with Cloud Foundry, which makes it very easy to orchestrate sophisticated deployments without writing or maintaining any deployment scripts. For the Spinnaker pipelines, we propose a pattern using `Configure->Evaluate Variables->Assign Variables` stages at the beginning of the pipeline to make it easier to assess and maintain the pipeline configuration.
+The holy grail in software delivery is fast and frequent deployments. In order to innovate and stay competitive, the ability to deliver product improvements to end users quickly and frequently, and to act on their feedback in order to improve our software, is key. However, coordinated releases of multiple components, manual testing, and complex deployment needs prevent many companies from achieving this objective.
 
-For this demo we also use Jenkins and Bintray, but these can be exchanged for alternate choices of your liking.
+An important aspect of achieving fast and frequent deployments is quality assurance, aka increasing the efficiency and efficacy of testing. A well-known technique for achieving this is Test-Driven Development (TDD).
 
-# Pre-requisites
-To run this demo, you will need access to:
-- GitHub
+Another key aspect is enabling independent release and rollback cycles. To achieve this, we must break dependencies between component versions. For this, we must ensure that our code changes are backwards compatible.
+
+A final aspect is achieving sophisticated deployment techniques (e.g. zero-downtime and metrics-driven canary deployments) in a simple way. This requires us to leverage modern toolsets for deployment and runtime.
+
+###How
+
+This demo will focus on the latter two _'why'_ aspects by:
+- incorporating back-compatibility testing for APIs and DB schemas into the CI pipeline in order to enable independent release and rollback cycles of applications, and
+- leveraging modern tools for deployment and runtime ([Spinnaker](https://www.spinnaker.io) and [OSS](https://run.pivotal.io)/[Pivotal Cloud Foundry](https://pivotal.io/platform), respectively) in order to achieve sophisticated deployment techniques in a simple way
+
+It is worth highlighting that these two aspects go hand-in-hand: in order to take advantage of a zero-downtime (blue/green or canary) deployment capabilities in production, the new code should be back-compatible with the old.
+
+## Instructions, Option 1: Quick & Dirty
+
+This section describes how to execute the crucial back-compatibility tests in this demo on your local machine. It does not require any account or tool setup other than GitHub and the git CLI.
+
+### Pre-requisites
+To run this portion of the demo, you will need:
+- An account on [GitHub](https://github.com)
+- The [git CLI](https://help.github.com/en/articles/set-up-git#setting-up-git) on your local machine
+
+
+
+
+## Instructions, Option 2: Full Setup
+
+### Pre-requisites
+To run this demo, you will need:
+- An account on [GitHub](https://github.com)
+- The [git CLI](https://help.github.com/en/articles/set-up-git#setting-up-git) on your local machine
 - Bintray
-- Cloud Foundry
+- Cloud Foundry (free trial at [Pivotal Web Services](https://run.pivotal.io))
 - Jenkins
 - Spinnaker
 
-# Pre-requisites Setup: GitHub
+### Pre-requisites Setup: GitHub
 1. Fork and clone the two demo app repos ([greeting-ui](https://github.com/ciberkleid/greeting-ui) and [fortune-service](https://github.com/ciberkleid/fortune-service)), and check out the `cloud-pipelines-spinnaker` branch in each.
 ```
 mkdir cna-demo
@@ -39,13 +64,13 @@ git checkout cloud-pipelines-spinnaker
 ```
 2. You will also need to set up SSH access from Jenkins. See the "Jenkins Setup" section below for more information.
 
-# Pre-requisites Setup: Bintray
+### Pre-requisites Setup: Bintray
 1. Create an account on Bintray (free). 
 2. Bintray requires that a package exist before any application artifacts can be uploaded. Log into the Bintray UI and create the packages for fortune-service and greeting-ui using the option “Import from GitHub.” Refer to these [screenshots](https://cloud.spring.io/spring-cloud-pipelines/single/spring-cloud-pipelines.html#_1_3_create_the_bintray_maven_repository_package) for guidance.
 3. Take note of your `<username>/<repo-root>` (`ciberkleid/maven-repo` in the sample screenshot), as you will need this when you set up your Jenkins jobs.
 4. Take note of your Bintray API key. You will also need this during your Jenkins setup.
 
-# Pre-requisites Setup: Cloud Foundry
+### Pre-requisites Setup: Cloud Foundry
 1. Create an Org with four Spaces in it, as follows:
 - Org:
     - cloud-pipelines-org
@@ -55,21 +80,21 @@ git checkout cloud-pipelines-spinnaker
     - stage
     - prod
 
-# Pre-requisites Setup: Spinnaker
+### Pre-requisites Setup: Spinnaker
 1. Configure Jenkins as a target account within Spinnaker.
     - This is needed so that Spinnaker can create a pipeline trigger based on the build job, and so that it can trigger the stage tests and release tagging jobs
 2. Configure Cloud Foundry as a target account within Spinnaker.
     - This is needed so that Spinnaker can deploy the applications to Cloud Foundry
 3. You will also need to create a pipeline for each app in Spinnaker. We will come back to this later in these instructions.
 
-# Pre-requisites Setup: Jenkins
+### Pre-requisites Setup: Jenkins
 1. Create a Credentials object of kind `SSH username with private key`. Create an SSH key pair and copy the private key to the Jenkins credentials object. Add the public SSH key to your GitHub account. This will enable Jenkins to tag releases in the GitHub app repos.
 2. Create a Credentials object of kind `secret text` with `value=<your Bintray API key>`. This will enable Jenkins to upload & publish app artifacts to Bintray.
 3. You will also need to create several jobs for each app in Jenkins. We will come back to this later in these instructions.    
 
 _____
 
-# Pipeline Setup: Jenkins
+### Pipeline Setup: Jenkins
 You will create a total of six (6) jobs, three for fortune-service, and three for greeting-ui.
 
 To simplify configuration, we are leveraging some of the logic built into the [Cloud Pipelines](https://github.com/cloudpipelines) project. In order to access this code in our Jenkins jobs, each job will download the distribution archive for Cloud Pipelines, which is available on GitHub.
@@ -213,7 +238,7 @@ For all jobs, it is recommended to configure "General->Discard old builds" to li
 - Select "Post-build Actions->Archive the artifacts" and set:
   Files to archive: ci-build.properties
 
-# Pipeline Setup: Spinnaker
+### Pipeline Setup: Spinnaker
 You will create a total of two (2) pipelines, one for fortune-service, and one for greeting-ui.
 
 Details coming soon...
