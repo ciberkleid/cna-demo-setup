@@ -242,3 +242,34 @@ For all jobs, it is recommended to configure "General->Discard old builds" to li
 You will create a total of two (2) pipelines, one for fortune-service, and one for greeting-ui.
 
 Details coming soon...
+
+### Demo Code Changes
+
+The following images show the code changes between demo steps.
+
+#### fortune-service 
+##### From build-1 (baseline) to build-2 (breaking API change)
+![code diff image](images/fortune-service-build-1-to-build-2-change-1.png)
+![code diff image](images/fortune-service-build-1-to-build-2-change-2.png)
+![code diff image](images/fortune-service-build-1-to-build-2-change-3.png)
+
+##### From build-2 to build-3 (compatible API change)
+![code diff image](images/fortune-service-build-2-to-build-3-change-1.png)
+
+##### From build-3 to build-4 (breaking DB change)
+![code diff image](images/fortune-service-build-3-to-build-4-change-1.png)
+![code diff image](images/fortune-service-build-3-to-build-4-change-2.png)
+
+##### From build-4 to build-5 (compatible DB change)
+![code diff image](images/fortune-service-build-4-to-build-5-change-1.png)
+
+#### greeting-ui
+##### From build-1 (baseline) to build-2 (breaking API change)
+![code diff image](images/greeting-ui-build-1-to-build-2-change-1.png)
+![code diff image](images/greeting-ui-build-1-to-build-2-change-2.png)
+![code diff image](images/greeting-ui-build-1-to-build-2-change-3.png)
+
+##### From build-2 to build-3 (compatible API change)
+![code diff image](images/greeting-ui-build-2-to-build-3-change-1.png)
+![code diff image](images/greeting-ui-build-2-to-build-3-change-2.png)
+![code diff image](images/greeting-ui-build-2-to-build-3-change-3.png)
