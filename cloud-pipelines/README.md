@@ -2,14 +2,14 @@
 This section explains how to set up a CI/CD pipeline for automated deployment of this demo application. (For instructions on how to manually deploy this demo to Pivotal Cloud Foundry, please see the [parent README](../README.md).)
 
 ## Introduction
-###What
+### What
 
 The pipeline in this setup is intended as a reference pipeline that accomplishes the following main objectives:
 1. Create a clear distinction between Continuous Integration (CI) and Continuous Delivery (CD)
 2. Enable development teams to achieve independent release and rollback cycles of their applications
 3. Enable release engineering teams to establish sophisticated deployment pipelines with minimum effort and complexity
 
-###Why
+### Why
 
 The holy grail in software delivery is fast and frequent deployments. In order to innovate and stay competitive, the ability to deliver product improvements to end users quickly and frequently, and to act on their feedback in order to improve our software, is key. However, coordinated releases of multiple components, manual testing, and complex deployment needs prevent many companies from achieving this objective.
 
@@ -19,7 +19,7 @@ Another key aspect is enabling independent release and rollback cycles. To achie
 
 A final aspect is achieving sophisticated deployment techniques (e.g. zero-downtime and metrics-driven canary deployments) in a simple way. This requires us to leverage modern toolsets for deployment and runtime.
 
-###How
+### How
 
 This demo will focus on the latter two _'why'_ aspects by:
 - incorporating back-compatibility testing for APIs and DB schemas into the CI pipeline in order to enable independent release and rollback cycles of applications, and
