@@ -9,6 +9,7 @@ echo "Enable C2C Networking? [eureka|mesh|NONE]: "
 read C2C
 
 CF_API=`cf api | head -1 | cut -c 17-`
+#CF_API=`cf api | head -1 | cut -c 25-`
 GIT_URI=${GIT_URI:-https://github.com/ciberkleid/app-config}
 BUILD=${BUILD:-N}
 case ${C2C} in
@@ -86,5 +87,5 @@ if [[ $C2C == "Y" ]]; then
 fi
 
 # Start apps
-cf restage fortune-service
-cf restage greeting-ui
+cf start fortune-service
+cf start greeting-ui
